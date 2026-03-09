@@ -2,12 +2,16 @@ import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
 export async function GET() {
-  const url = process.env.SUPABASE_URL;
-  const key = process.env.SUPABASE_ANON_KEY;
+  const url = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.SUPABASE_ANON_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
   if (!url || !key) {
     return NextResponse.json(
-      { ok: false, error: "Missing SUPABASE_URL or SUPABASE_ANON_KEY" },
+      {
+        ok: false,
+        error:
+          "Missing SUPABASE_URL/SUPABASE_ANON_KEY (or NEXT_PUBLIC_SUPABASE_URL/NEXT_PUBLIC_SUPABASE_ANON_KEY)",
+      },
       { status: 500 }
     );
   }
@@ -24,4 +28,3 @@ export async function GET() {
 
   return NextResponse.json({ ok: true, stocksCount: count });
 }
-
