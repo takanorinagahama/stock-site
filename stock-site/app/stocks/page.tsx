@@ -1,19 +1,47 @@
-import Link from "next/link";
-import { fetchStockItems, type StockApiItem } from "../../lib/fetch-stocks";
-import { getCategoryDescription, normalizeCategoryLabel } from "../../lib/categories";
+import { fetchStockItems } from "../../lib/fetch-stocks";
+import StocksFilteredView from "./stocks-filtered-view";
 
-function toStars(score: number): string {
-  const stars = Math.max(1, Math.min(5, Math.round(score / 20)));
-  return "★".repeat(stars) + "☆".repeat(5 - stars);
+function formatAsOfMonth(asOfMonth: string | null): string | null {
+  if (!asOfMonth) return null;
+  const match = asOfMonth.match(/^(\d{4})-(\d{2})$/);
+  if (!match) return asOfMonth;
+  return `${match[1]}年${Number(match[2])}月`;
 }
 
-function getAiCategory(stock: StockApiItem): string {
-  return normalizeCategoryLabel(stock.aiCategory ?? stock.categoryJa ?? null);
-}
-
-function formatValue(value: number | string | null): string {
-  return value == null || value === "" ? "データ不足" : String(value);
-}
+const SCORE_GUIDE_CARDS = [
+  {
+    title: "AI売上の大きさ",
+    body: [
+      "AI関連事業から生まれている売上規模の目安です。",
+      "AIインフラ、半導体、クラウド、AIサービスなど、AI需要によって生まれている売上の大きさを示します。",
+      "規模が大きい企業ほど、AI市場の拡大の恩恵を受けやすいと考えられます。",
+    ],
+  },
+  {
+    title: "AIの伸び",
+    body: [
+      "AI関連売上の成長の強さを示します。",
+      "AI事業の売上成長率から、企業全体の売上成長率を引いた値をベースにしています。",
+      "AI関連事業が企業の成長をどれだけ押し上げているかを見る指標です。",
+    ],
+  },
+  {
+    title: "AIとの関わり",
+    body: [
+      "その企業のビジネスがAIとどれだけ深く結びついているかを示します。",
+      "AI半導体、AIサーバー、AIクラウド、AIソフトウェアなど、AI需要と直接結びつく事業ほど評価が高くなります。",
+    ],
+  },
+  {
+    title: "データの確からしさ",
+    body: [
+      "AI関連売上の推定に使っているデータの信頼度です。",
+      "A: 企業がAI売上を明確に開示している",
+      "B: AI関連セグメントなどから推定",
+      "C: AI関連事業の比率などから概算",
+    ],
+  },
+] as const;
 
 export default async function StocksPage() {
   const data = await fetchStockItems();
@@ -27,32 +55,29 @@ export default async function StocksPage() {
     );
   }
 
-  const sortedItems = [...data.items].sort((a, b) => {
-    const aScore = a.score;
-    const bScore = b.score;
-    if (aScore == null && bScore == null) return a.ticker.localeCompare(b.ticker);
-    if (aScore == null) return 1;
-    if (bScore == null) return -1;
-    if (bScore !== aScore) return bScore - aScore;
-    return a.ticker.localeCompare(b.ticker);
-  });
-
-  const categoryMap = new Map<string, Array<{ ticker: string; name: string }>>();
-  for (const stock of sortedItems) {
-    const category = getAiCategory(stock).trim() || "未分類";
-    const current = categoryMap.get(category) ?? [];
-    current.push({ ticker: stock.ticker, name: stock.name });
-    categoryMap.set(category, current);
-  }
-
-  const categoryEntries = Array.from(categoryMap.entries()).sort((a, b) => a[0].localeCompare(b[0]));
+  const asOfMonthLabel = formatAsOfMonth(data.asOfMonth);
 
   return (
     <main style={{ maxWidth: 1240, margin: "56px auto", padding: "0 24px", lineHeight: 1.65 }}>
       <h1 style={{ fontSize: 32, marginBottom: 6 }}>AI銘柄ランキング</h1>
-      <p style={{ opacity: 0.88, marginBottom: 14 }}>
-        {data.count}銘柄 / 基準月: {data.asOfMonth ?? "データ不足"}
-      </p>
+      <p style={{ opacity: 0.88, marginBottom: 10 }}>{data.count}銘柄を掲載中</p>
+
+      {asOfMonthLabel ? (
+        <section
+          style={{
+            border: "1px solid rgba(255,255,255,0.1)",
+            background: "rgba(255,255,255,0.05)",
+            borderRadius: 14,
+            padding: 12,
+            marginBottom: 12,
+          }}
+        >
+          <p style={{ margin: 0, fontWeight: 700 }}>最終更新: {asOfMonthLabel}</p>
+          <p style={{ margin: "4px 0 0", opacity: 0.8, fontSize: 13 }}>
+            このランキングは{asOfMonthLabel}時点のデータをもとにしています。
+          </p>
+        </section>
+      ) : null}
 
       <section style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: 12, marginBottom: 14 }}>
         <div style={{ border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.05)", borderRadius: 16, padding: 14 }}>
@@ -64,23 +89,11 @@ export default async function StocksPage() {
         </div>
 
         <div style={{ border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.05)", borderRadius: 16, padding: 14 }}>
-          <h2 style={{ fontSize: 18, marginBottom: 6 }}>指標の意味</h2>
-          <ul style={{ margin: 0, paddingLeft: 20 }}>
-            <li>score: 総合評価。欠損時はデータ不足。</li>
-            <li>aiRevMid: AI関連売上の目安（推定値）。</li>
-            <li>growthDiff: AIの伸び（AI成長率 - 全社成長率）。</li>
-            <li>dependencyLevel: AIとの結びつき（1〜4）。</li>
-            <li>tier: データの確からしさ（A/B/C）。</li>
-            <li>updatedMonth: データ基準月。</li>
-          </ul>
-        </div>
-
-        <div style={{ border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.05)", borderRadius: 16, padding: 14 }}>
           <h2 style={{ fontSize: 18, marginBottom: 6 }}>使い方</h2>
           <ol style={{ margin: 0, paddingLeft: 20 }}>
-            <li>ランキング上位を確認</li>
-            <li>詳細ページで内訳と寄与点を確認</li>
-            <li>公式サイト/IRで一次情報を確認</li>
+            <li>カテゴリで絞り込んで気になる領域を見る</li>
+            <li>ランキングで企業を比較する</li>
+            <li>詳細ページで内訳と寄与点を確認する</li>
           </ol>
         </div>
       </section>
@@ -94,102 +107,36 @@ export default async function StocksPage() {
           marginBottom: 14,
         }}
       >
-        <h2 style={{ fontSize: 20, marginBottom: 8 }}>AI産業マップ（カテゴリ別）</h2>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 10 }}>
-          {categoryEntries.map(([category, stocks]) => (
+        <h2 style={{ fontSize: 18, marginBottom: 6 }}>AIスコアの見方</h2>
+        <p style={{ margin: "0 0 10px", opacity: 0.9 }}>
+          AIスコアは、AI売上の大きさ・AIの伸び・AIとの関わりの強さ・データの確からしさをもとにした目安です。
+        </p>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: 10 }}>
+          {SCORE_GUIDE_CARDS.map((card) => (
             <div
-              key={category}
+              key={card.title}
               style={{
-                border: "1px solid rgba(255,255,255,0.1)",
+                border: "1px solid rgba(255,255,255,0.2)",
                 background: "rgba(255,255,255,0.03)",
-                borderRadius: 12,
-                padding: 10,
+                borderRadius: 10,
+                padding: "10px 12px",
               }}
             >
-              <h3 style={{ fontSize: 16, marginBottom: 6 }}>{category}</h3>
-              <p style={{ opacity: 0.7, margin: "0 0 6px", fontSize: 12 }}>
-                {getCategoryDescription(category)}
-              </p>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "4px 10px" }}>
-                {stocks.map((stock) => (
-                  <Link
-                    key={`${category}-${stock.ticker}`}
-                    href={`/stocks/${stock.ticker}`}
-                    className="map-link"
-                    style={{ color: "rgba(255,255,255,0.88)", textDecoration: "none" }}
-                  >
-                    {stock.name}
-                  </Link>
-                ))}
-              </div>
+              <p style={{ margin: "0 0 6px", fontWeight: 700, fontSize: 14 }}>{card.title}</p>
+              {card.body.map((line, index) => (
+                <p
+                  key={`${card.title}-${index}`}
+                  style={{ margin: index === card.body.length - 1 ? 0 : "0 0 6px", opacity: 0.86, fontSize: 12 }}
+                >
+                  {line}
+                </p>
+              ))}
             </div>
           ))}
         </div>
       </section>
 
-      <style>{`
-        .map-link {
-          transition: color 0.15s ease;
-        }
-        .map-link:hover {
-          color: rgba(255,255,255,1);
-        }
-      `}</style>
-
-      <div style={{ border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, overflowX: "auto" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 980 }}>
-          <thead>
-            <tr style={{ background: "rgba(255,255,255,0.05)" }}>
-              <th style={{ textAlign: "right", borderBottom: "1px solid rgba(255,255,255,0.2)", padding: 10 }}>順位</th>
-              <th style={{ textAlign: "left", borderBottom: "1px solid rgba(255,255,255,0.2)", padding: 10 }}>ティッカー</th>
-              <th style={{ textAlign: "left", borderBottom: "1px solid rgba(255,255,255,0.2)", padding: 10 }}>企業名</th>
-              <th style={{ textAlign: "left", borderBottom: "1px solid rgba(255,255,255,0.2)", padding: 10 }}>AI期待度</th>
-              <th style={{ textAlign: "right", borderBottom: "1px solid rgba(255,255,255,0.2)", padding: 10 }}>AI関連売上の目安</th>
-              <th style={{ textAlign: "right", borderBottom: "1px solid rgba(255,255,255,0.2)", padding: 10 }}>AIの伸び</th>
-              <th style={{ textAlign: "right", borderBottom: "1px solid rgba(255,255,255,0.2)", padding: 10 }}>AIとの結びつき</th>
-              <th style={{ textAlign: "left", borderBottom: "1px solid rgba(255,255,255,0.2)", padding: 10 }}>データの確からしさ</th>
-              <th style={{ textAlign: "left", borderBottom: "1px solid rgba(255,255,255,0.2)", padding: 10 }}>基準月</th>
-              <th style={{ textAlign: "left", borderBottom: "1px solid rgba(255,255,255,0.2)", padding: 10 }}>AIカテゴリ</th>
-            </tr>
-          </thead>
-          <tbody>
-            {sortedItems.map((stock, index) => {
-              const missing = stock.score == null;
-              return (
-                <tr
-                  key={stock.ticker}
-                  style={missing ? { opacity: 0.7, background: "rgba(255,255,255,0.02)" } : undefined}
-                >
-                  <td style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", padding: 10, textAlign: "right", fontVariantNumeric: "tabular-nums" }}>
-                    {index + 1}
-                  </td>
-                  <td style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", padding: 10 }}>
-                    <Link href={`/stocks/${stock.ticker}`}>{stock.ticker}</Link>
-                  </td>
-                  <td style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", padding: 10 }}>
-                    <Link href={`/stocks/${stock.ticker}`}>{stock.name}</Link>
-                  </td>
-                  <td style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", padding: 10 }}>
-                    {stock.score == null ? "データ不足" : `${stock.score} (${toStars(stock.score)})`}
-                  </td>
-                  <td style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", padding: 10, textAlign: "right", fontVariantNumeric: "tabular-nums" }}>
-                    {formatValue(stock.aiRevMid)}
-                  </td>
-                  <td style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", padding: 10, textAlign: "right", fontVariantNumeric: "tabular-nums" }}>
-                    {formatValue(stock.growthDiff)}
-                  </td>
-                  <td style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", padding: 10, textAlign: "right", fontVariantNumeric: "tabular-nums" }}>
-                    {stock.dependencyLabel ?? formatValue(stock.dependencyLevel)}
-                  </td>
-                  <td style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", padding: 10 }}>{formatValue(stock.tier)}</td>
-                  <td style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", padding: 10 }}>{formatValue(stock.updatedMonth)}</td>
-                  <td style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", padding: 10 }}>{getAiCategory(stock)}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+      <StocksFilteredView items={data.items} />
     </main>
   );
 }

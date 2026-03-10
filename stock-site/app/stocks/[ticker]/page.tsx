@@ -14,6 +14,11 @@ function asText(value: number | string | null | undefined, fallback = "データ
   return value == null || value === "" ? fallback : String(value);
 }
 
+function formatAiRevenue(value: number | null | undefined): string {
+  if (value == null) return "データ不足";
+  return value.toLocaleString("en-US");
+}
+
 export default async function StockDetailPage({ params }: DetailPageProps) {
   const { ticker } = await params;
   const item = await fetchStockByTicker(ticker);
@@ -103,23 +108,6 @@ export default async function StockDetailPage({ params }: DetailPageProps) {
         </div>
       </section>
 
-      <section
-        style={{
-          border: "1px solid rgba(255,255,255,0.1)",
-          background: "rgba(255,255,255,0.05)",
-          borderRadius: 16,
-          padding: 14,
-          marginBottom: 14,
-        }}
-      >
-        <h2 style={{ fontSize: 18, marginBottom: 6 }}>このページの読み方</h2>
-        <ul style={{ margin: 0, paddingLeft: 20 }}>
-          <li>入力値: スコア計算の元になる値（aiRevMid / growthDiff / dependencyLevel / tier）</li>
-          <li>寄与点: 各項目がスコアにどれだけ加点したか</li>
-          <li>スコアがデータ不足なら、AI metrics未登録の可能性があります</li>
-        </ul>
-      </section>
-
       {item.score == null ? (
         <section
           style={{
@@ -165,7 +153,7 @@ export default async function StockDetailPage({ params }: DetailPageProps) {
             </tr>
             <tr>
               <th style={{ textAlign: "left", borderBottom: "1px solid rgba(255,255,255,0.2)", padding: 8 }}>AI売上（推定）</th>
-              <td style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", padding: 8 }}>{asText(item.aiRevMid)}</td>
+              <td style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", padding: 8 }}>{formatAiRevenue(item.aiRevMid)}</td>
             </tr>
             <tr>
               <th style={{ textAlign: "left", borderBottom: "1px solid rgba(255,255,255,0.2)", padding: 8 }}>AI成長力</th>
@@ -233,6 +221,74 @@ export default async function StockDetailPage({ params }: DetailPageProps) {
         ) : (
           <p style={{ margin: 0 }}>AI metrics未登録のため、寄与点は表示できません。</p>
         )}
+      </section>
+
+      <section className="mb-3 rounded-2xl border border-white/10 bg-white/5 p-4">
+        <h2 className="mb-2 text-xl font-semibold">このページの読み方</h2>
+        <p className="mb-3 text-sm leading-7 text-white/85">
+          このページでは、AI関連事業が企業の成長にどれだけ影響しているかを
+          いくつかの指標から整理しています。
+        </p>
+        <div className="grid gap-3 md:grid-cols-2">
+          <article className="rounded-xl border border-white/10 bg-white/5 p-3">
+            <h3 className="mb-1 font-semibold">AI期待度</h3>
+            <p className="text-sm leading-7 text-white/80">
+              AI売上の大きさ、AIの成長、AIとの関わりの強さ、
+              データの確からしさを総合して算出したスコアです。
+              AI事業が企業価値にどれだけ影響しているかを全体的に評価する目安です。
+            </p>
+          </article>
+          <article className="rounded-xl border border-white/10 bg-white/5 p-3">
+            <h3 className="mb-1 font-semibold">AI売上（推定）</h3>
+            <p className="text-sm leading-7 text-white/80">
+              AI関連事業から生まれている売上の規模の目安です。
+              企業がAI売上を開示している場合はその数値を使用し、
+              開示がない場合はAI関連セグメント・AI製品の売上・AI向け設備需要などから推定しています。
+            </p>
+          </article>
+          <article className="rounded-xl border border-white/10 bg-white/5 p-3">
+            <h3 className="mb-1 font-semibold">AI成長力</h3>
+            <p className="text-sm leading-7 text-white/80">
+              AI関連事業の成長の強さを示す指標です。
+              AI関連売上の成長率と、企業全体の売上成長率を比較して算出しています。
+              AI事業が企業全体の成長をどれだけ押し上げているかを見るための指標です。
+            </p>
+          </article>
+          <article className="rounded-xl border border-white/10 bg-white/5 p-3">
+            <h3 className="mb-1 font-semibold">AI依存度</h3>
+            <p className="text-sm leading-7 text-white/80">
+              企業のビジネスがどれだけAI需要と結びついているかを示します。
+              AI半導体・AIサーバー・AIクラウド・AIソフトウェアなど、
+              AI市場の拡大と直接関係する事業ほど依存度が高くなります。
+            </p>
+          </article>
+        </div>
+        <div className="mt-3 grid gap-3 md:grid-cols-2">
+          <article className="rounded-xl border border-white/10 bg-white/5 p-3">
+            <h3 className="mb-1 font-semibold">AI売上寄与</h3>
+            <p className="text-sm leading-7 text-white/80">
+              AI売上の規模がAI期待度スコアにどれだけ影響したかを示します。
+            </p>
+          </article>
+          <article className="rounded-xl border border-white/10 bg-white/5 p-3">
+            <h3 className="mb-1 font-semibold">成長寄与</h3>
+            <p className="text-sm leading-7 text-white/80">
+              AI成長力がAI期待度スコアにどれだけ影響したかを示します。
+            </p>
+          </article>
+          <article className="rounded-xl border border-white/10 bg-white/5 p-3">
+            <h3 className="mb-1 font-semibold">依存寄与</h3>
+            <p className="text-sm leading-7 text-white/80">
+              AI依存度がAI期待度スコアにどれだけ影響したかを示します。
+            </p>
+          </article>
+          <article className="rounded-xl border border-white/10 bg-white/5 p-3">
+            <h3 className="mb-1 font-semibold">確度寄与</h3>
+            <p className="text-sm leading-7 text-white/80">
+              データの信頼性（A / B / C）がスコアにどれだけ影響したかを示します。
+            </p>
+          </article>
+        </div>
       </section>
     </main>
   );
