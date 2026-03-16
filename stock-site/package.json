@@ -11,6 +11,7 @@
     "import:csv": "tsx scripts/import_csv.ts"
   },
   "dependencies": {
+    "@next/third-parties": "^16.1.6",
     "@supabase/supabase-js": "^2.97.0",
     "dotenv": "^17.3.1",
     "next": "16.1.6",
