@@ -22,19 +22,19 @@ function formatAiRevenue(value: number | null | undefined): string {
 const GUIDE_ITEMS = [
   {
     title: "AI期待度",
-    body: "AI関連事業の重要度を総合的に見た目安スコアです。売上規模、成長、AIとの結びつき、データ確度をもとに算出しています。",
+    body: "AI関連事業の重要度を総合的に見た目安スコアです。",
   },
   {
     title: "AI売上（推定）",
-    body: "AI関連事業から生まれている売上規模の目安です。企業開示がない場合は、関連セグメントや製品構成などから推定しています。",
+    body: "AI関連事業から生まれている売上規模の目安です。",
   },
   {
     title: "AI成長力",
-    body: "AI関連事業がどれだけ成長を押し上げているかを見る指標です。AI売上の伸びと全社売上の伸びを比較して評価しています。",
+    body: "AI関連事業がどれだけ成長を押し上げているかを見る指標です。",
   },
   {
     title: "AI依存度",
-    body: "その企業の事業がAI需要とどれだけ強く結びついているかを示します。AI半導体やAIクラウドに近いほど高くなります。",
+    body: "その企業の事業がAI需要とどれだけ強く結びついているかを示します。",
   },
 ] as const;
 
@@ -269,25 +269,43 @@ export default async function StockDetailPage({ params }: DetailPageProps) {
 
         <div className="mb-4">
           <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-white/60">主要指標</p>
-          <div className="grid gap-3 md:grid-cols-2">
-            {GUIDE_ITEMS.map((item) => (
-              <article key={item.title} className="rounded-xl border border-white/10 bg-white/5 p-3">
-                <h3 className="mb-1 text-sm font-semibold">{item.title}</h3>
-                <p className="text-sm leading-6 text-white/80">{item.body}</p>
-              </article>
-            ))}
+          <div className="overflow-hidden rounded-xl border border-white/10 bg-white/5">
+            <div className="hidden grid-cols-[180px_minmax(0,1fr)] border-b border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white/55 md:grid">
+              <div>項目</div>
+              <div>意味</div>
+            </div>
+            <dl>
+              {GUIDE_ITEMS.map((item) => (
+                <div
+                  key={item.title}
+                  className="grid gap-1 border-b border-white/10 px-4 py-3 last:border-b-0 md:grid-cols-[180px_minmax(0,1fr)] md:gap-4"
+                >
+                  <dt className="text-sm font-semibold text-white/95">{item.title}</dt>
+                  <dd className="text-sm leading-6 text-white/78">{item.body}</dd>
+                </div>
+              ))}
+            </dl>
           </div>
         </div>
 
         <div>
           <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-white/60">スコアの内訳</p>
-          <div className="grid gap-2 md:grid-cols-2">
-            {CONTRIBUTION_GUIDE_ITEMS.map((item) => (
-              <article key={item.title} className="rounded-xl border border-white/10 bg-white/5 p-3">
-                <h3 className="mb-1 text-sm font-semibold">{item.title}</h3>
-                <p className="text-sm leading-6 text-white/75">{item.body}</p>
-              </article>
-            ))}
+          <div className="overflow-hidden rounded-xl border border-white/10 bg-white/5">
+            <div className="hidden grid-cols-[180px_minmax(0,1fr)] border-b border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white/55 md:grid">
+              <div>項目</div>
+              <div>意味</div>
+            </div>
+            <dl>
+              {CONTRIBUTION_GUIDE_ITEMS.map((item) => (
+                <div
+                  key={item.title}
+                  className="grid gap-1 border-b border-white/10 px-4 py-3 last:border-b-0 md:grid-cols-[180px_minmax(0,1fr)] md:gap-4"
+                >
+                  <dt className="text-sm font-semibold text-white/90">{item.title}</dt>
+                  <dd className="text-sm leading-6 text-white/72">{item.body}</dd>
+                </div>
+              ))}
+            </dl>
           </div>
         </div>
       </section>
