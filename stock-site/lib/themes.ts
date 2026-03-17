@@ -462,3 +462,13 @@ export function getThemeTitle(slug: string): string {
 export function getAllThemeSlugs(): string[] {
   return THEMES.map((theme) => theme.slug);
 }
+
+export function getThemesBySlugs(slugs: string[]): ThemeDefinition[] {
+  return slugs
+    .map((slug) => getThemeBySlug(slug))
+    .filter((theme): theme is ThemeDefinition => theme != null);
+}
+
+export function getThemeGroupsForSlug(slug: string): ThemeGroupDefinition[] {
+  return THEME_GROUPS.filter((group) => group.themeSlugs.includes(slug));
+}
