@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import Link from "next/link";
 import "./globals.css";
 
 const siteUrl = "https://ai-stock-data.com";
@@ -47,7 +48,33 @@ export default function RootLayout({
 
   return (
     <html lang="ja">
-      <body>{children}</body>
+      <body>
+        {children}
+        <footer
+          style={{
+            maxWidth: 980,
+            margin: "40px auto 24px",
+            padding: "0 24px",
+            color: "rgba(255,255,255,0.72)",
+          }}
+        >
+          <div
+            style={{
+              borderTop: "1px solid rgba(255,255,255,0.1)",
+              paddingTop: 14,
+              display: "flex",
+              flexWrap: "wrap",
+              gap: "8px 16px",
+              fontSize: 13,
+            }}
+          >
+            <Link href="/about">このサイトについて</Link>
+            <Link href="/privacy">プライバシーポリシー</Link>
+            <Link href="/disclaimer">免責事項</Link>
+            <Link href="/contact">お問い合わせ</Link>
+          </div>
+        </footer>
+      </body>
       {gaMeasurementId ? <GoogleAnalytics gaId={gaMeasurementId} /> : null}
     </html>
   );
