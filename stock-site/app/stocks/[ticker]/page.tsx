@@ -269,63 +269,25 @@ export default async function StockDetailPage({ params }: DetailPageProps) {
 
         <div className="mb-4">
           <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-white/60">主要指標</p>
-          <div className="overflow-hidden rounded-xl border border-white/10 bg-black/10">
-            <div className="hidden grid-cols-[180px_minmax(0,1fr)] bg-white/5 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white/55 md:grid">
-              <div>項目</div>
-              <div>意味</div>
-            </div>
-            <div className="divide-y divide-white/10">
-              {GUIDE_ITEMS.map((item) => (
-                <div
-                  key={item.title}
-                  className="grid gap-3 px-4 py-3 md:grid-cols-[180px_minmax(0,1fr)] md:items-start md:gap-4"
-                >
-                  <div>
-                    <div className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-white/45 md:hidden">
-                      項目
-                    </div>
-                    <div className="text-sm font-semibold text-white/95">{item.title}</div>
-                  </div>
-                  <div>
-                    <div className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-white/45 md:hidden">
-                      意味
-                    </div>
-                    <div className="text-sm leading-6 text-white/78">{item.body}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
+          <div className="grid gap-3 md:grid-cols-2">
+            {GUIDE_ITEMS.map((item) => (
+              <article key={item.title} className="rounded-xl border border-white/10 bg-black/10 p-3">
+                <h3 className="mb-1 text-sm font-semibold text-white/95">{item.title}</h3>
+                <p className="text-sm leading-6 text-white/78">{item.body}</p>
+              </article>
+            ))}
           </div>
         </div>
 
         <div>
           <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-white/60">スコアの内訳</p>
-          <div className="overflow-hidden rounded-xl border border-white/10 bg-black/10">
-            <div className="hidden grid-cols-[180px_minmax(0,1fr)] bg-white/5 px-4 py-2 text-xs font-semibold uppercase tracking-wide text-white/55 md:grid">
-              <div>項目</div>
-              <div>意味</div>
-            </div>
-            <div className="divide-y divide-white/10">
-              {CONTRIBUTION_GUIDE_ITEMS.map((item) => (
-                <div
-                  key={item.title}
-                  className="grid gap-3 px-4 py-3 md:grid-cols-[180px_minmax(0,1fr)] md:items-start md:gap-4"
-                >
-                  <div>
-                    <div className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-white/45 md:hidden">
-                      項目
-                    </div>
-                    <div className="text-sm font-semibold text-white/90">{item.title}</div>
-                  </div>
-                  <div>
-                    <div className="mb-1 text-[11px] font-semibold uppercase tracking-wide text-white/45 md:hidden">
-                      意味
-                    </div>
-                    <div className="text-sm leading-6 text-white/72">{item.body}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
+          <div className="grid gap-2 md:grid-cols-2">
+            {CONTRIBUTION_GUIDE_ITEMS.map((item) => (
+              <article key={item.title} className="rounded-xl border border-white/10 bg-black/10 p-3">
+                <h3 className="mb-1 text-sm font-semibold text-white/90">{item.title}</h3>
+                <p className="text-sm leading-6 text-white/72">{item.body}</p>
+              </article>
+            ))}
           </div>
         </div>
       </section>
