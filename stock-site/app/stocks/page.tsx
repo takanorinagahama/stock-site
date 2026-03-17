@@ -1,5 +1,32 @@
+import type { Metadata } from "next";
 import { fetchStockItems } from "../../lib/fetch-stocks";
 import StocksFilteredView from "./stocks-filtered-view";
+
+export const metadata: Metadata = {
+  title: "AI銘柄ランキング | AI Stock Data",
+  description:
+    "AI関連銘柄の一覧ページ。企業のAIとの関わり方や比較軸を整理し、投資判断に役立つ情報を見やすく掲載。",
+  alternates: {
+    canonical: "https://ai-stock-data.com/stocks",
+  },
+  openGraph: {
+    title: "AI銘柄ランキング | AI Stock Data",
+    description:
+      "AI関連銘柄の一覧ページ。企業のAIとの関わり方や比較軸を整理し、投資判断に役立つ情報を見やすく掲載。",
+    url: "https://ai-stock-data.com/stocks",
+    siteName: "AI Stock Data",
+    images: ["/ogp.png"],
+    locale: "ja_JP",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AI銘柄ランキング | AI Stock Data",
+    description:
+      "AI関連銘柄の一覧ページ。企業のAIとの関わり方や比較軸を整理し、投資判断に役立つ情報を見やすく掲載。",
+    images: ["/ogp.png"],
+  },
+};
 
 function formatAsOfMonth(asOfMonth: string | null): string | null {
   if (!asOfMonth) return null;
