@@ -19,6 +19,19 @@ function formatAiRevenue(value: number | null | undefined): string {
   return value.toLocaleString("en-US");
 }
 
+const detailTableLabelCellStyle = {
+  textAlign: "left" as const,
+  borderBottom: "1px solid rgba(255,255,255,0.2)",
+  padding: 8,
+  width: "220px",
+  whiteSpace: "nowrap" as const,
+};
+
+const detailTableValueCellStyle = {
+  borderBottom: "1px solid rgba(255,255,255,0.1)",
+  padding: 8,
+};
+
 const GUIDE_ITEMS = [
   {
     title: "AI期待度",
@@ -178,38 +191,38 @@ export default async function StockDetailPage({ params }: DetailPageProps) {
         <table style={{ width: "100%", borderCollapse: "collapse" }}>
           <tbody>
             <tr>
-              <th style={{ textAlign: "left", borderBottom: "1px solid rgba(255,255,255,0.2)", padding: 8 }}>ティッカー</th>
-              <td style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", padding: 8 }}>{item.ticker}</td>
+              <th style={detailTableLabelCellStyle}>ティッカー</th>
+              <td style={detailTableValueCellStyle}>{item.ticker}</td>
             </tr>
             <tr>
-              <th style={{ textAlign: "left", borderBottom: "1px solid rgba(255,255,255,0.2)", padding: 8 }}>企業名</th>
-              <td style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", padding: 8 }}>{item.name}</td>
+              <th style={detailTableLabelCellStyle}>企業名</th>
+              <td style={detailTableValueCellStyle}>{item.name}</td>
             </tr>
             <tr>
-              <th style={{ textAlign: "left", borderBottom: "1px solid rgba(255,255,255,0.2)", padding: 8 }}>AI期待度</th>
-              <td style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", padding: 8 }}>{asText(item.score)}</td>
+              <th style={detailTableLabelCellStyle}>AI期待度</th>
+              <td style={detailTableValueCellStyle}>{asText(item.score)}</td>
             </tr>
             <tr>
-              <th style={{ textAlign: "left", borderBottom: "1px solid rgba(255,255,255,0.2)", padding: 8 }}>AI売上（推定）</th>
-              <td style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", padding: 8 }}>{formatAiRevenue(item.aiRevMid)}</td>
+              <th style={detailTableLabelCellStyle}>AI売上（推定）</th>
+              <td style={detailTableValueCellStyle}>{formatAiRevenue(item.aiRevMid)}</td>
             </tr>
             <tr>
-              <th style={{ textAlign: "left", borderBottom: "1px solid rgba(255,255,255,0.2)", padding: 8 }}>AI成長力</th>
-              <td style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", padding: 8 }}>{asText(item.growthDiff)}</td>
+              <th style={detailTableLabelCellStyle}>AI成長力</th>
+              <td style={detailTableValueCellStyle}>{asText(item.growthDiff)}</td>
             </tr>
             <tr>
-              <th style={{ textAlign: "left", borderBottom: "1px solid rgba(255,255,255,0.2)", padding: 8 }}>AI依存度</th>
-              <td style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", padding: 8 }}>
+              <th style={detailTableLabelCellStyle}>AI依存度</th>
+              <td style={detailTableValueCellStyle}>
                 {item.dependencyLabel ?? asText(item.dependencyLevel)}
               </td>
             </tr>
             <tr>
-              <th style={{ textAlign: "left", borderBottom: "1px solid rgba(255,255,255,0.2)", padding: 8 }}>確度</th>
-              <td style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", padding: 8 }}>{asText(item.tier)}</td>
+              <th style={detailTableLabelCellStyle}>確度</th>
+              <td style={detailTableValueCellStyle}>{asText(item.tier)}</td>
             </tr>
             <tr>
-              <th style={{ textAlign: "left", borderBottom: "1px solid rgba(255,255,255,0.2)", padding: 8 }}>基準月</th>
-              <td style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", padding: 8 }}>{asText(item.updatedMonth)}</td>
+              <th style={detailTableLabelCellStyle}>基準月</th>
+              <td style={detailTableValueCellStyle}>{asText(item.updatedMonth)}</td>
             </tr>
           </tbody>
         </table>
@@ -232,24 +245,24 @@ export default async function StockDetailPage({ params }: DetailPageProps) {
           <table style={{ width: "100%", borderCollapse: "collapse" }}>
             <tbody>
               <tr>
-                <th style={{ textAlign: "left", borderBottom: "1px solid rgba(255,255,255,0.2)", padding: 8 }}>AI売上寄与</th>
-                <td style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", padding: 8 }}>{item.scoreParts.ai}</td>
+                <th style={detailTableLabelCellStyle}>AI売上寄与</th>
+                <td style={detailTableValueCellStyle}>{item.scoreParts.ai}</td>
               </tr>
               <tr>
-                <th style={{ textAlign: "left", borderBottom: "1px solid rgba(255,255,255,0.2)", padding: 8 }}>成長寄与</th>
-                <td style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", padding: 8 }}>{item.scoreParts.growth}</td>
+                <th style={detailTableLabelCellStyle}>成長寄与</th>
+                <td style={detailTableValueCellStyle}>{item.scoreParts.growth}</td>
               </tr>
               <tr>
-                <th style={{ textAlign: "left", borderBottom: "1px solid rgba(255,255,255,0.2)", padding: 8 }}>依存度寄与</th>
-                <td style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", padding: 8 }}>{item.scoreParts.dependency}</td>
+                <th style={detailTableLabelCellStyle}>依存度寄与</th>
+                <td style={detailTableValueCellStyle}>{item.scoreParts.dependency}</td>
               </tr>
               <tr>
-                <th style={{ textAlign: "left", borderBottom: "1px solid rgba(255,255,255,0.2)", padding: 8 }}>確度寄与</th>
-                <td style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", padding: 8 }}>{item.scoreParts.tier ?? 0}</td>
+                <th style={detailTableLabelCellStyle}>確度寄与</th>
+                <td style={detailTableValueCellStyle}>{item.scoreParts.tier ?? 0}</td>
               </tr>
               <tr>
-                <th style={{ textAlign: "left", borderBottom: "1px solid rgba(255,255,255,0.2)", padding: 8 }}>合計</th>
-                <td style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", padding: 8 }}>
+                <th style={detailTableLabelCellStyle}>合計</th>
+                <td style={detailTableValueCellStyle}>
                   {partsTotal != null ? partsTotal : "データ不足"}
                   {partsTotal != null && item.score != null ? ` (score: ${item.score})` : ""}
                 </td>
