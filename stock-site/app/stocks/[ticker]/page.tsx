@@ -19,6 +19,44 @@ function formatAiRevenue(value: number | null | undefined): string {
   return value.toLocaleString("en-US");
 }
 
+const GUIDE_ITEMS = [
+  {
+    title: "AI期待度",
+    body: "AI関連事業の重要度を総合的に見た目安スコアです。売上規模、成長、AIとの結びつき、データ確度をもとに算出しています。",
+  },
+  {
+    title: "AI売上（推定）",
+    body: "AI関連事業から生まれている売上規模の目安です。企業開示がない場合は、関連セグメントや製品構成などから推定しています。",
+  },
+  {
+    title: "AI成長力",
+    body: "AI関連事業がどれだけ成長を押し上げているかを見る指標です。AI売上の伸びと全社売上の伸びを比較して評価しています。",
+  },
+  {
+    title: "AI依存度",
+    body: "その企業の事業がAI需要とどれだけ強く結びついているかを示します。AI半導体やAIクラウドに近いほど高くなります。",
+  },
+] as const;
+
+const CONTRIBUTION_GUIDE_ITEMS = [
+  {
+    title: "AI売上寄与",
+    body: "AI売上の規模がスコアにどれだけ効いているかを示します。",
+  },
+  {
+    title: "成長寄与",
+    body: "AI関連事業の伸びがスコアにどれだけ効いているかを示します。",
+  },
+  {
+    title: "依存寄与",
+    body: "AI需要との結びつきの強さがスコアにどれだけ効いているかを示します。",
+  },
+  {
+    title: "確度寄与",
+    body: "データの信頼性がスコアにどれだけ反映されているかを示します。",
+  },
+] as const;
+
 export default async function StockDetailPage({ params }: DetailPageProps) {
   const { ticker } = await params;
   const item = await fetchStockByTicker(ticker);
@@ -225,69 +263,32 @@ export default async function StockDetailPage({ params }: DetailPageProps) {
 
       <section className="mb-3 rounded-2xl border border-white/10 bg-white/5 p-4">
         <h2 className="mb-2 text-xl font-semibold">このページの読み方</h2>
-        <p className="mb-3 text-sm leading-7 text-white/85">
-          このページでは、AI関連事業が企業の成長にどれだけ影響しているかを
-          いくつかの指標から整理しています。
+        <p className="mb-4 text-sm leading-7 text-white/85">
+          このページでは、AI関連事業がその企業にどれだけ重要かを、売上規模・成長・事業の結びつき・データ確度の4つの観点から整理しています。
         </p>
-        <div className="grid gap-3 md:grid-cols-2">
-          <article className="rounded-xl border border-white/10 bg-white/5 p-3">
-            <h3 className="mb-1 font-semibold">AI期待度</h3>
-            <p className="text-sm leading-7 text-white/80">
-              AI売上の大きさ、AIの成長、AIとの関わりの強さ、
-              データの確からしさを総合して算出したスコアです。
-              AI事業が企業価値にどれだけ影響しているかを全体的に評価する目安です。
-            </p>
-          </article>
-          <article className="rounded-xl border border-white/10 bg-white/5 p-3">
-            <h3 className="mb-1 font-semibold">AI売上（推定）</h3>
-            <p className="text-sm leading-7 text-white/80">
-              AI関連事業から生まれている売上の規模の目安です。
-              企業がAI売上を開示している場合はその数値を使用し、
-              開示がない場合はAI関連セグメント・AI製品の売上・AI向け設備需要などから推定しています。
-            </p>
-          </article>
-          <article className="rounded-xl border border-white/10 bg-white/5 p-3">
-            <h3 className="mb-1 font-semibold">AI成長力</h3>
-            <p className="text-sm leading-7 text-white/80">
-              AI関連事業の成長の強さを示す指標です。
-              AI関連売上の成長率と、企業全体の売上成長率を比較して算出しています。
-              AI事業が企業全体の成長をどれだけ押し上げているかを見るための指標です。
-            </p>
-          </article>
-          <article className="rounded-xl border border-white/10 bg-white/5 p-3">
-            <h3 className="mb-1 font-semibold">AI依存度</h3>
-            <p className="text-sm leading-7 text-white/80">
-              企業のビジネスがどれだけAI需要と結びついているかを示します。
-              AI半導体・AIサーバー・AIクラウド・AIソフトウェアなど、
-              AI市場の拡大と直接関係する事業ほど依存度が高くなります。
-            </p>
-          </article>
+
+        <div className="mb-4">
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-white/60">主要指標</p>
+          <div className="grid gap-3 md:grid-cols-2">
+            {GUIDE_ITEMS.map((item) => (
+              <article key={item.title} className="rounded-xl border border-white/10 bg-white/5 p-3">
+                <h3 className="mb-1 text-sm font-semibold">{item.title}</h3>
+                <p className="text-sm leading-6 text-white/80">{item.body}</p>
+              </article>
+            ))}
+          </div>
         </div>
-        <div className="mt-3 grid gap-3 md:grid-cols-2">
-          <article className="rounded-xl border border-white/10 bg-white/5 p-3">
-            <h3 className="mb-1 font-semibold">AI売上寄与</h3>
-            <p className="text-sm leading-7 text-white/80">
-              AI売上の規模がAI期待度スコアにどれだけ影響したかを示します。
-            </p>
-          </article>
-          <article className="rounded-xl border border-white/10 bg-white/5 p-3">
-            <h3 className="mb-1 font-semibold">成長寄与</h3>
-            <p className="text-sm leading-7 text-white/80">
-              AI成長力がAI期待度スコアにどれだけ影響したかを示します。
-            </p>
-          </article>
-          <article className="rounded-xl border border-white/10 bg-white/5 p-3">
-            <h3 className="mb-1 font-semibold">依存寄与</h3>
-            <p className="text-sm leading-7 text-white/80">
-              AI依存度がAI期待度スコアにどれだけ影響したかを示します。
-            </p>
-          </article>
-          <article className="rounded-xl border border-white/10 bg-white/5 p-3">
-            <h3 className="mb-1 font-semibold">確度寄与</h3>
-            <p className="text-sm leading-7 text-white/80">
-              データの信頼性（A / B / C）がスコアにどれだけ影響したかを示します。
-            </p>
-          </article>
+
+        <div>
+          <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-white/60">スコアの内訳</p>
+          <div className="grid gap-2 md:grid-cols-2">
+            {CONTRIBUTION_GUIDE_ITEMS.map((item) => (
+              <article key={item.title} className="rounded-xl border border-white/10 bg-white/5 p-3">
+                <h3 className="mb-1 text-sm font-semibold">{item.title}</h3>
+                <p className="text-sm leading-6 text-white/75">{item.body}</p>
+              </article>
+            ))}
+          </div>
         </div>
       </section>
     </main>
