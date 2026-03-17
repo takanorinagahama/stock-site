@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { fetchStockItems } from "../../lib/fetch-stocks";
 import StocksFilteredView from "./stocks-filtered-view";
 
@@ -123,6 +124,24 @@ export default async function StocksPage() {
             <li>詳細ページで内訳と寄与点を確認する</li>
           </ol>
         </div>
+      </section>
+
+      <section
+        style={{
+          border: "1px solid rgba(255,255,255,0.1)",
+          background: "rgba(255,255,255,0.05)",
+          borderRadius: 16,
+          padding: 14,
+          marginBottom: 14,
+        }}
+      >
+        <h2 style={{ fontSize: 18, marginBottom: 6 }}>テーマ別に比較したい方へ</h2>
+        <p style={{ margin: "0 0 8px", opacity: 0.88 }}>
+          半導体、データセンター、NVIDIA関連、日本の電力インフラなど、切り口ごとに銘柄を整理したテーマページも用意しています。
+        </p>
+        <Link href="/themes" style={{ textDecoration: "underline", textUnderlineOffset: 4 }}>
+          テーマ別AI関連銘柄を見る
+        </Link>
       </section>
 
       <section
