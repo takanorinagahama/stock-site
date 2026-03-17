@@ -13,7 +13,7 @@ type FilterLabel =
   | "全て"
   | "AI半導体"
   | "AIクラウド"
-  | "AI SaaS"
+  | "AIソフト"
   | "AIアプリケーション"
   | "AIネットワーク"
   | "AIインフラ"
@@ -23,12 +23,18 @@ const FILTER_ORDER: FilterLabel[] = [
   "全て",
   "AI半導体",
   "AIクラウド",
-  "AI SaaS",
+  "AIソフト",
   "AIアプリケーション",
   "AIネットワーク",
   "AIインフラ",
   "その他",
 ];
+
+const DUPLICATE_TICKER_GROUPS = [
+  ["TSM", "2330.TW"],
+  ["8035.T", "8035"],
+  ["ASML", "ASML.AS"],
+] as const;
 
 function toStars(score: number): string {
   const stars = Math.max(1, Math.min(5, Math.round(score / 20)));
@@ -52,7 +58,11 @@ function formatGrowthDiff(value: number | null): string {
 }
 
 function getAiCategory(stock: StockApiItem): string {
-  return normalizeCategoryLabel(stock.aiCategory ?? stock.categoryJa ?? null);
+  return normalizeCategoryLabel(stock.categoryJa ?? stock.aiCategory ?? null);
+}
+
+function formatUpdatedMonth(value: string | null): string {
+  return value == null || value === "" ? "未整理" : value;
 }
 
 function toFilterCategory(categoryJa: string): Exclude<FilterLabel, "全て"> {
@@ -64,7 +74,7 @@ function toFilterCategory(categoryJa: string): Exclude<FilterLabel, "全て"> {
     return "AI半導体";
   }
   if (categoryJa.includes("クラウド")) return "AIクラウド";
-  if (categoryJa.includes("AI SaaS")) return "AI SaaS";
+  if (categoryJa.includes("SaaS") || categoryJa.includes("ソフト")) return "AIソフト";
   if (categoryJa.includes("アプリケーション")) return "AIアプリケーション";
   if (categoryJa.includes("ネットワーク") || categoryJa.includes("光通信")) {
     return "AIネットワーク";
@@ -75,11 +85,35 @@ function toFilterCategory(categoryJa: string): Exclude<FilterLabel, "全て"> {
   return "その他";
 }
 
+function dedupeDisplayItems(items: StockApiItem[]): StockApiItem[] {
+  const hiddenTickers = new Set<string>();
+
+  for (const group of DUPLICATE_TICKER_GROUPS) {
+    const normalizedGroup = group.map((ticker) => ticker.toUpperCase());
+    const existing = items.filter((item) => normalizedGroup.includes(item.ticker.toUpperCase()));
+    if (existing.length <= 1) continue;
+
+    const preferredTicker = normalizedGroup.find((ticker) =>
+      existing.some((item) => item.ticker.toUpperCase() === ticker),
+    );
+
+    for (const item of existing) {
+      if (item.ticker.toUpperCase() !== preferredTicker) {
+        hiddenTickers.add(item.ticker.toUpperCase());
+      }
+    }
+  }
+
+  return items.filter((item) => !hiddenTickers.has(item.ticker.toUpperCase()));
+}
+
 export default function StocksFilteredView({ items }: Props) {
   const [activeFilter, setActiveFilter] = useState<FilterLabel>("全て");
 
+  const displayItems = useMemo(() => dedupeDisplayItems(items), [items]);
+
   const sortedItems = useMemo(() => {
-    return [...items].sort((a, b) => {
+    return [...displayItems].sort((a, b) => {
       const aScore = a.score;
       const bScore = b.score;
       if (aScore == null && bScore == null) return a.ticker.localeCompare(b.ticker);
@@ -88,7 +122,7 @@ export default function StocksFilteredView({ items }: Props) {
       if (bScore !== aScore) return bScore - aScore;
       return a.ticker.localeCompare(b.ticker);
     });
-  }, [items]);
+  }, [displayItems]);
 
   const availableFilters = useMemo(() => {
     const found = new Set<FilterLabel>(["全て"]);
@@ -239,7 +273,16 @@ export default function StocksFilteredView({ items }: Props) {
                     <Link href={`/stocks/${stock.ticker}`}>{stock.name}</Link>
                   </td>
                   <td style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", padding: 10 }}>
-                    {stock.score == null ? "データ不足" : `${stock.score} (${toStars(stock.score)})`}
+                    {stock.score == null ? (
+                      <>
+                        データ不足
+                        <div style={{ fontSize: 11, opacity: 0.72, marginTop: 3 }}>
+                          一次情報の追加確認中
+                        </div>
+                      </>
+                    ) : (
+                      `${stock.score} (${toStars(stock.score)})`
+                    )}
                     {stock.scoreReasonLabels && stock.scoreReasonLabels.length > 0 ? (
                       <div style={{ fontSize: 11, opacity: 0.72, marginTop: 3 }}>
                         {stock.scoreReasonLabels.slice(0, 2).join(" / ")}
@@ -256,7 +299,7 @@ export default function StocksFilteredView({ items }: Props) {
                     {stock.dependencyLabel ?? formatValue(stock.dependencyLevel)}
                   </td>
                   <td style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", padding: 10 }}>{formatValue(stock.tier)}</td>
-                  <td style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", padding: 10 }}>{formatValue(stock.updatedMonth)}</td>
+                  <td style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", padding: 10 }}>{formatUpdatedMonth(stock.updatedMonth)}</td>
                   <td style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", padding: 10 }}>{getAiCategory(stock)}</td>
                 </tr>
               );
