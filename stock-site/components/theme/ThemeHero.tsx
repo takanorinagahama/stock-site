@@ -3,20 +3,20 @@ import Link from "next/link";
 type ThemeHeroProps = {
   title: string;
   description: string;
-  eyebrow?: string;
   tags?: string[];
   breadcrumbs?: Array<{ label: string; href?: string }>;
+  meta?: string;
 };
 
 export default function ThemeHero({
   title,
   description,
-  eyebrow,
   tags = [],
   breadcrumbs = [],
+  meta,
 }: ThemeHeroProps) {
   return (
-    <section className="rounded-3xl border border-white/10 bg-gradient-to-br from-white/8 to-white/[0.03] p-6 md:p-8">
+    <section className="rounded-2xl border border-white/10 bg-white/5 p-6 md:p-8">
       {breadcrumbs.length > 0 ? (
         <nav className="mb-4 flex flex-wrap items-center gap-2 text-sm text-white/55">
           {breadcrumbs.map((item, index) => (
@@ -33,7 +33,7 @@ export default function ThemeHero({
           ))}
         </nav>
       ) : null}
-      {eyebrow ? <p className="mb-2 text-xs font-semibold uppercase tracking-[0.24em] text-white/45">{eyebrow}</p> : null}
+      {meta ? <p className="mb-2 text-sm text-white/55">{meta}</p> : null}
       <h1 className="max-w-4xl text-3xl font-semibold tracking-tight text-white md:text-4xl">{title}</h1>
       <p className="mt-4 max-w-3xl text-base leading-8 text-white/78">{description}</p>
       {tags.length > 0 ? (
@@ -41,7 +41,7 @@ export default function ThemeHero({
           {tags.map((tag) => (
             <span
               key={tag}
-              className="rounded-full border border-white/10 bg-black/15 px-3 py-1 text-xs font-medium text-white/70"
+              className="rounded-full border border-white/10 bg-black/20 px-3 py-1 text-xs font-medium text-white/70"
             >
               {tag}
             </span>
