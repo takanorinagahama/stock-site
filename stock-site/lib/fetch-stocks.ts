@@ -1,6 +1,8 @@
 import { headers } from "next/headers";
 import { getBaseUrlFromHeaders } from "./get-base-url";
 
+const STOCKS_REVALIDATE_SECONDS = 300;
+
 export type StockScoreParts = {
   ai: number;
   growth: number;
@@ -37,7 +39,9 @@ export type StocksApiResponse =
 async function fetchStocksApi(): Promise<StocksApiResponse> {
   const h = await headers();
   const baseUrl = getBaseUrlFromHeaders(h);
-  const res = await fetch(`${baseUrl}/api/stocks`, { cache: "no-store" });
+  const res = await fetch(`${baseUrl}/api/stocks`, {
+    next: { revalidate: STOCKS_REVALIDATE_SECONDS },
+  });
 
   if (!res.ok) {
     return { ok: false, error: `Failed to fetch stocks: ${res.status}` };
@@ -60,9 +64,19 @@ export async function fetchStockItems(): Promise<StocksApiResponse> {
 }
 
 export async function fetchStockByTicker(ticker: string): Promise<StockApiItem | null> {
-  const data = await fetchStocksApi();
-  if (!data.ok) return null;
+  const h = await headers();
+  const baseUrl = getBaseUrlFromHeaders(h);
+  const res = await fetch(`${baseUrl}/api/stocks/${encodeURIComponent(ticker.toUpperCase())}`, {
+    next: { revalidate: STOCKS_REVALIDATE_SECONDS },
+  });
 
-  const normalized = ticker.toUpperCase();
-  return data.items.find((item) => item.ticker.toUpperCase() === normalized) ?? null;
+  if (res.status === 404) return null;
+  if (!res.ok) return null;
+
+  const data = (await res.json()) as
+    | { ok: true; item: StockApiItem }
+    | { ok: false; error: string };
+
+  if (!data.ok) return null;
+  return data.item;
 }

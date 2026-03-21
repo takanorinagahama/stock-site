@@ -3,6 +3,8 @@ import { createClient } from "@supabase/supabase-js";
 import { calcScoreBreakdown, calcTotalScore } from "../../../lib/score";
 import { toCategoryJa } from "../../../lib/categories";
 
+export const revalidate = 300;
+
 type StockRow = {
   ticker: string;
   name: string;
@@ -79,19 +81,21 @@ export async function GET(request: Request) {
   const supabase = createClient(url, key);
   const debug = new URL(request.url).searchParams.get("debug") === "1";
 
-  const { data: stocks, error: sErr } = await supabase
-    .from("stocks")
-    .select(
-      "ticker,name,country,market,asset_type,ai_category,ir_url,company_description,ai_summary,company_url,dependency_level,dependency_level_int,dependency_label,is_active"
-    )
-    .eq("is_active", true);
+  const [{ data: stocks, error: sErr }, { data: metrics, error: mErr }] = await Promise.all([
+    supabase
+      .from("stocks")
+      .select(
+        "ticker,name,country,market,asset_type,ai_category,ir_url,company_description,ai_summary,company_url,dependency_level,dependency_level_int,dependency_label,is_active"
+      )
+      .eq("is_active", true),
+    supabase
+      .from("ai_metrics")
+      .select(
+        "ticker,fiscal_period,tier,ai_rev_low,ai_rev_high,ai_rev_mid,ai_growth_yoy,company_growth_yoy,updated_month"
+      ),
+  ]);
 
   if (sErr) return NextResponse.json({ ok: false, error: sErr.message }, { status: 500 });
-
-  const { data: metrics, error: mErr } = await supabase
-    .from("ai_metrics")
-    .select("ticker,fiscal_period,tier,ai_rev_low,ai_rev_high,ai_rev_mid,ai_growth_yoy,company_growth_yoy,updated_month");
-
   if (mErr) return NextResponse.json({ ok: false, error: mErr.message }, { status: 500 });
 
   const latestByTicker = new Map<string, MetricRow>();

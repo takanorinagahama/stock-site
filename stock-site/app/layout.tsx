@@ -55,8 +55,8 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
       </head>
-      <body>
-        {children}
+      <body className="flex min-h-screen flex-col">
+        <div className="flex-1">{children}</div>
         <footer
           style={{
             maxWidth: 980,
