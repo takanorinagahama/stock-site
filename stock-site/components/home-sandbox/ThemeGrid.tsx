@@ -51,7 +51,7 @@ function ThemeGroupCard({ group }: { group: ThemeGroupDefinition }) {
               marginTop: 2,
             }}
           />
-          <span style={{ fontSize: 12, color: "#475569" }}>{count}テーマ</span>
+          <span style={{ fontSize: 12, color: "#94a3b8" }}>{count}テーマ</span>
         </div>
         <h3
           style={{
@@ -68,7 +68,7 @@ function ThemeGroupCard({ group }: { group: ThemeGroupDefinition }) {
           style={{
             fontSize: 12,
             lineHeight: 1.7,
-            color: "#64748b",
+            color: "#94a3b8",
           }}
         >
           {group.description}
@@ -101,7 +101,7 @@ export function ThemeGrid() {
           >
             テーマから探す
           </h2>
-          <p style={{ fontSize: 13, color: "#64748b", marginTop: 4 }}>
+          <p style={{ fontSize: 13, color: "#94a3b8", marginTop: 4 }}>
             興味のあるカテゴリからAI関連銘柄を比較できます
           </p>
         </div>

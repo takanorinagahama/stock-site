@@ -42,7 +42,7 @@ function GuideCard({ icon, iconColor, iconBg, title, body }: GuideCardProps) {
       >
         {title}
       </h3>
-      <p style={{ fontSize: 13, lineHeight: 1.75, color: "#64748b" }}>
+      <p style={{ fontSize: 13, lineHeight: 1.75, color: "#94a3b8" }}>
         {body}
       </p>
     </div>

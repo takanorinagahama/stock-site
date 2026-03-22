@@ -46,7 +46,7 @@ export function AboutCards() {
                 >
                   ✓
                 </span>
-                <span style={{ fontSize: 13, lineHeight: 1.6, color: "#94a3b8" }}>
+                <span style={{ fontSize: 13, lineHeight: 1.6, color: "#cbd5e1" }}>
                   {item}
                 </span>
               </li>
@@ -133,7 +133,7 @@ export function AboutCards() {
                     style={{
                       fontSize: 12,
                       lineHeight: 1.6,
-                      color: "#64748b",
+                      color: "#94a3b8",
                     }}
                   >
                     {step.body}

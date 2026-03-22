@@ -3,32 +3,17 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import type { StockApiItem } from "../../lib/fetch-stocks";
-import { getCategoryDescription, normalizeCategoryLabel } from "../../lib/categories";
+import { THEMES } from "../../lib/themes";
+import { normalizeCategoryLabel } from "../../lib/categories";
 
-type Props = {
-  items: StockApiItem[];
-};
-
-type FilterLabel =
-  | "全て"
-  | "AI半導体"
-  | "AIクラウド"
-  | "AIソフト"
-  | "AIアプリケーション"
-  | "AIネットワーク"
-  | "AIインフラ"
-  | "その他";
-
-const FILTER_ORDER: FilterLabel[] = [
-  "全て",
-  "AI半導体",
-  "AIクラウド",
-  "AIソフト",
-  "AIアプリケーション",
-  "AIネットワーク",
-  "AIインフラ",
-  "その他",
-];
+/* ─── Design tokens ─── */
+const CARD_BG = "rgba(255,255,255,0.04)";
+const BORDER = "1px solid rgba(255,255,255,0.07)";
+const TEXT_PRI = "#f1f5f9";
+const TEXT_SEC = "#cbd5e1";
+const TEXT_TER = "#94a3b8";
+const INDIGO_BG = "rgba(99,102,241,0.1)";
+const INDIGO_TEXT = "#a5b4fc";
 
 const DUPLICATE_TICKER_GROUPS = [
   ["TSM", "2330.TW"],
@@ -36,277 +21,485 @@ const DUPLICATE_TICKER_GROUPS = [
   ["ASML", "ASML.AS"],
 ] as const;
 
-function toStars(score: number): string {
-  const stars = Math.max(1, Math.min(5, Math.round(score / 20)));
-  return "★".repeat(stars) + "☆".repeat(5 - stars);
-}
-
-function formatValue(value: number | string | null): string {
-  return value == null || value === "" ? "データ不足" : String(value);
+/* ─── Helpers ─── */
+function dedupeItems(items: StockApiItem[]): StockApiItem[] {
+  const hiddenTickers = new Set<string>();
+  for (const group of DUPLICATE_TICKER_GROUPS) {
+    const norm = group.map((t) => t.toUpperCase());
+    const existing = items.filter((item) => norm.includes(item.ticker.toUpperCase()));
+    if (existing.length <= 1) continue;
+    const preferred = norm.find((t) => existing.some((item) => item.ticker.toUpperCase() === t));
+    for (const item of existing) {
+      if (item.ticker.toUpperCase() !== preferred) hiddenTickers.add(item.ticker.toUpperCase());
+    }
+  }
+  return items.filter((item) => !hiddenTickers.has(item.ticker.toUpperCase()));
 }
 
 function formatAiRevenue(value: number | null): string {
-  if (value == null) return "データ不足";
+  if (value == null) return "—";
   return value.toLocaleString("en-US");
 }
 
 function formatGrowthDiff(value: number | null): string {
-  if (value == null) return "データ不足";
-  const truncated = Math.trunc(value * 10) / 10;
-  if (Number.isInteger(truncated)) return String(truncated);
-  return truncated.toFixed(1);
+  if (value == null) return "—";
+  const t = Math.trunc(value * 10) / 10;
+  const str = Number.isInteger(t) ? String(t) : t.toFixed(1);
+  return value > 0 ? `+${str}` : str;
 }
 
-function getAiCategory(stock: StockApiItem): string {
+function getAiCategoryLabel(stock: StockApiItem): string {
   return normalizeCategoryLabel(stock.categoryJa ?? stock.aiCategory ?? null);
 }
 
-function formatUpdatedMonth(value: string | null): string {
-  return value == null || value === "" ? "未整理" : value;
+function ScoreBadge({ score }: { score: number | null }) {
+  if (score == null) return <span style={{ fontSize: 11, color: TEXT_TER, fontStyle: "italic" }}>—</span>;
+  const color =
+    score >= 80 ? "#6ee7b7" : score >= 65 ? "#a5b4fc" : score >= 50 ? "#93c5fd" : "#94a3b8";
+  const bg =
+    score >= 80
+      ? "rgba(52,211,153,0.15)"
+      : score >= 65
+      ? "rgba(99,102,241,0.15)"
+      : score >= 50
+      ? "rgba(96,165,250,0.1)"
+      : "rgba(148,163,184,0.1)";
+  const border =
+    score >= 80
+      ? "rgba(52,211,153,0.3)"
+      : score >= 65
+      ? "rgba(99,102,241,0.3)"
+      : "rgba(148,163,184,0.2)";
+  return (
+    <span
+      style={{
+        fontSize: 13,
+        fontWeight: 700,
+        padding: "2px 9px",
+        borderRadius: 6,
+        background: bg,
+        color,
+        border: `1px solid ${border}`,
+        fontVariantNumeric: "tabular-nums",
+      }}
+    >
+      {score}
+    </span>
+  );
 }
 
-function toFilterCategory(categoryJa: string): Exclude<FilterLabel, "全て"> {
-  if (
-    categoryJa.includes("半導体") ||
-    categoryJa.includes("アクセラレータ") ||
-    categoryJa.includes("CPU")
-  ) {
-    return "AI半導体";
-  }
-  if (categoryJa.includes("クラウド")) return "AIクラウド";
-  if (categoryJa.includes("SaaS") || categoryJa.includes("ソフト")) return "AIソフト";
-  if (categoryJa.includes("アプリケーション")) return "AIアプリケーション";
-  if (categoryJa.includes("ネットワーク") || categoryJa.includes("光通信")) {
-    return "AIネットワーク";
-  }
-  if (categoryJa.includes("インフラ") || categoryJa.includes("サーバー") || categoryJa.includes("データ基盤")) {
-    return "AIインフラ";
-  }
-  return "その他";
+function StarRating({ score }: { score: number | null }) {
+  if (score == null) return null;
+  const filled = Math.max(1, Math.min(5, Math.round(score / 20)));
+  return (
+    <span style={{ fontSize: 11, letterSpacing: 1 }}>
+      {Array.from({ length: 5 }, (_, i) => (
+        <span key={i} style={{ color: i < filled ? "#818cf8" : "rgba(255,255,255,0.15)" }}>
+          ★
+        </span>
+      ))}
+    </span>
+  );
 }
 
-function dedupeDisplayItems(items: StockApiItem[]): StockApiItem[] {
-  const hiddenTickers = new Set<string>();
-
-  for (const group of DUPLICATE_TICKER_GROUPS) {
-    const normalizedGroup = group.map((ticker) => ticker.toUpperCase());
-    const existing = items.filter((item) => normalizedGroup.includes(item.ticker.toUpperCase()));
-    if (existing.length <= 1) continue;
-
-    const preferredTicker = normalizedGroup.find((ticker) =>
-      existing.some((item) => item.ticker.toUpperCase() === ticker),
-    );
-
-    for (const item of existing) {
-      if (item.ticker.toUpperCase() !== preferredTicker) {
-        hiddenTickers.add(item.ticker.toUpperCase());
-      }
-    }
-  }
-
-  return items.filter((item) => !hiddenTickers.has(item.ticker.toUpperCase()));
+function DepBadge({ label, level }: { label: string | null; level: number | null }) {
+  const dep = label ?? (level != null && level >= 3 ? "高い" : level != null && level >= 2 ? "中程度" : "低い");
+  const colors: Record<string, { bg: string; text: string }> = {
+    高い: { bg: "rgba(139,92,246,0.1)", text: "#c4b5fd" },
+    中程度: { bg: "rgba(96,165,250,0.1)", text: "#93c5fd" },
+    低い: { bg: "rgba(100,116,139,0.1)", text: "#94a3b8" },
+  };
+  const c = colors[dep] ?? colors["低い"];
+  return (
+    <span
+      style={{
+        fontSize: 11,
+        fontWeight: 600,
+        padding: "2px 8px",
+        borderRadius: 5,
+        background: c.bg,
+        color: c.text,
+      }}
+    >
+      {dep}
+    </span>
+  );
 }
+
+type Props = { items: StockApiItem[] };
+
+const COLUMN_GUIDE = [
+  {
+    label: "AI期待度",
+    desc: "0〜100の参考スコア。AI関連の成長期待度を4軸で算出した目安値です。",
+  },
+  {
+    label: "AI売上（推定）",
+    desc: "AI関連から生まれる売上規模の目安です（百万ドル単位）。",
+  },
+  {
+    label: "AI成長力",
+    desc: "AI関連事業の成長がどれだけスコアを押し上げているかを見る指標です。",
+  },
+  {
+    label: "AI依存度",
+    desc: "その企業の事業がAI需要とどれだけ強くつながっているかを示します。",
+  },
+  {
+    label: "確度",
+    desc: "データの信頼性。高いほどスコアに自信があります（1〜10）。",
+  },
+];
 
 export default function StocksFilteredView({ items }: Props) {
-  const [activeFilter, setActiveFilter] = useState<FilterLabel>("全て");
+  const [activeTheme, setActiveTheme] = useState<string>("all");
 
-  const displayItems = useMemo(() => dedupeDisplayItems(items), [items]);
+  const deduped = useMemo(() => dedupeItems(items), [items]);
 
-  const sortedItems = useMemo(() => {
-    return [...displayItems].sort((a, b) => {
-      const aScore = a.score;
-      const bScore = b.score;
-      if (aScore == null && bScore == null) return a.ticker.localeCompare(b.ticker);
-      if (aScore == null) return 1;
-      if (bScore == null) return -1;
-      if (bScore !== aScore) return bScore - aScore;
-      return a.ticker.localeCompare(b.ticker);
+  const sorted = useMemo(() => {
+    return [...deduped].sort((a, b) => {
+      if (a.score == null && b.score == null) return a.ticker.localeCompare(b.ticker);
+      if (a.score == null) return 1;
+      if (b.score == null) return -1;
+      return b.score - a.score;
     });
-  }, [displayItems]);
+  }, [deduped]);
 
-  const availableFilters = useMemo(() => {
-    const found = new Set<FilterLabel>(["全て"]);
-    for (const stock of sortedItems) {
-      const filter = toFilterCategory(getAiCategory(stock));
-      found.add(filter);
-    }
-    return FILTER_ORDER.filter((label) => found.has(label));
-  }, [sortedItems]);
-
-  const filteredItems = useMemo(() => {
-    if (activeFilter === "全て") return sortedItems;
-    return sortedItems.filter((stock) => toFilterCategory(getAiCategory(stock)) === activeFilter);
-  }, [activeFilter, sortedItems]);
-
-  const categoryEntries = useMemo(() => {
-    const categoryMap = new Map<string, Array<{ ticker: string; name: string }>>();
-    for (const stock of filteredItems) {
-      const category = getAiCategory(stock).trim() || "未分類";
-      const current = categoryMap.get(category) ?? [];
-      current.push({ ticker: stock.ticker, name: stock.name });
-      categoryMap.set(category, current);
-    }
-    return Array.from(categoryMap.entries()).sort((a, b) => a[0].localeCompare(b[0]));
-  }, [filteredItems]);
+  const filtered = useMemo(() => {
+    if (activeTheme === "all") return sorted;
+    const theme = THEMES.find((t) => t.slug === activeTheme);
+    if (!theme) return sorted;
+    const tickers = new Set(theme.featuredStocks.map((s) => s.ticker.toUpperCase()));
+    return sorted.filter((s) => tickers.has(s.ticker.toUpperCase()));
+  }, [activeTheme, sorted]);
 
   return (
-    <>
-      <section
+    <div>
+      {/* Theme filter chips */}
+      <div style={{ marginBottom: 20 }}>
+        <p
+          style={{
+            fontSize: 11,
+            fontWeight: 600,
+            textTransform: "uppercase",
+            letterSpacing: "0.08em",
+            color: TEXT_TER,
+            marginBottom: 10,
+          }}
+        >
+          テーマで絞り込む
+        </p>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 7 }}>
+          <ThemeChip label="すべて" active={activeTheme === "all"} onClick={() => setActiveTheme("all")} />
+          {THEMES.map((t) => (
+            <ThemeChip
+              key={t.slug}
+              label={t.title}
+              active={activeTheme === t.slug}
+              onClick={() => setActiveTheme(t.slug)}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* Table */}
+      <div
         style={{
-          border: "1px solid rgba(255,255,255,0.1)",
-          background: "rgba(255,255,255,0.05)",
-          borderRadius: 16,
-          padding: 14,
-          marginBottom: 14,
+          background: CARD_BG,
+          border: BORDER,
+          borderRadius: 14,
+          overflow: "hidden",
+          marginBottom: 20,
         }}
       >
-        <p style={{ margin: "0 0 8px", fontWeight: 700 }}>カテゴリで絞り込む</p>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
-          {availableFilters.map((filter) => {
-            const selected = filter === activeFilter;
-            return (
-              <button
-                key={filter}
-                type="button"
-                onClick={() => setActiveFilter(filter)}
+        {/* Mobile: cards */}
+        <div>
+          <style>{`
+            @media (min-width: 768px) { .stock-mobile-cards { display: none !important; } }
+            @media (max-width: 767px) { .stock-desktop-table { display: none !important; } }
+            .sf-ticker-link:hover { opacity: 0.75; }
+            .sf-name-link:hover { color: #f1f5f9 !important; }
+          `}</style>
+          <div className="stock-mobile-cards">
+            {filtered.map((s, i) => (
+              <Link
+                key={s.ticker}
+                href={`/stocks/${s.ticker}`}
                 style={{
-                  border: selected
-                    ? "1px solid rgba(255,255,255,0.45)"
-                    : "1px solid rgba(255,255,255,0.2)",
-                  background: selected ? "rgba(255,255,255,0.16)" : "rgba(255,255,255,0.06)",
-                  color: "rgba(255,255,255,0.95)",
-                  borderRadius: 999,
-                  padding: "6px 12px",
-                  fontSize: 13,
-                  cursor: "pointer",
+                  display: "block",
+                  textDecoration: "none",
+                  borderBottom: i < filtered.length - 1 ? "1px solid rgba(255,255,255,0.05)" : "none",
+                  padding: "14px 16px",
+                  color: "inherit",
                 }}
               >
-                {filter}
-              </button>
-            );
-          })}
-        </div>
-      </section>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                    <span style={{ fontSize: 12, color: TEXT_TER, width: 20, textAlign: "center" }}>{i + 1}</span>
+                    <div>
+                      <span style={{ fontSize: 14, fontWeight: 700, color: TEXT_PRI }}>{s.ticker}</span>
+                      <p style={{ fontSize: 11, color: TEXT_TER }}>{s.name}</p>
+                    </div>
+                  </div>
+                  <ScoreBadge score={s.score} />
+                </div>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: "4px 14px", marginLeft: 30 }}>
+                  <span style={{ fontSize: 11, color: TEXT_TER }}>AI売上: <span style={{ color: TEXT_SEC }}>{formatAiRevenue(s.aiRevMid)}</span></span>
+                  <span style={{ fontSize: 11, color: TEXT_TER }}>成長: <span style={{ color: TEXT_SEC }}>{formatGrowthDiff(s.growthDiff)}</span></span>
+                </div>
+              </Link>
+            ))}
+          </div>
 
-      <section
+          {/* Desktop: table */}
+          <div className="stock-desktop-table" style={{ overflowX: "auto" }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 820 }}>
+              <thead>
+                <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
+                  {[
+                    { label: "#", align: "center" as const, w: 40 },
+                    { label: "ticker", align: "left" as const },
+                    { label: "企業名", align: "left" as const },
+                    { label: "AIカテゴリ", align: "left" as const },
+                    { label: "AI期待度 ↑", align: "left" as const },
+                    { label: "AI売上（推定）", align: "right" as const },
+                    { label: "AI成長力", align: "right" as const },
+                    { label: "AI依存度", align: "left" as const },
+                    { label: "確度", align: "center" as const },
+                  ].map((col, idx) => (
+                    <th
+                      key={idx}
+                      style={{
+                        textAlign: col.align,
+                        padding: "11px 14px",
+                        fontSize: 11,
+                        fontWeight: 600,
+                        color: TEXT_TER,
+                        whiteSpace: "nowrap",
+                        width: col.w,
+                      }}
+                    >
+                      {col.label}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {filtered.map((s, i) => {
+                  const growth = s.growthDiff;
+                  const growthStr = formatGrowthDiff(growth);
+                  const growthColor =
+                    growth == null
+                      ? TEXT_TER
+                      : growth > 0
+                      ? "#6ee7b7"
+                      : growth < 0
+                      ? "#fca5a5"
+                      : TEXT_SEC;
+                  return (
+                    <tr
+                      key={s.ticker}
+                      style={{
+                        borderBottom:
+                          i < filtered.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none",
+                      }}
+                    >
+                      <td style={{ padding: "11px 14px", textAlign: "center", color: TEXT_TER, fontSize: 12 }}>{i + 1}</td>
+                      <td style={{ padding: "11px 14px" }}>
+                        <Link
+                          href={`/stocks/${s.ticker}`}
+                          className="sf-ticker-link"
+                          style={{
+                            display: "inline-block",
+                            fontSize: 12,
+                            fontWeight: 700,
+                            padding: "2px 8px",
+                            borderRadius: 5,
+                            background: INDIGO_BG,
+                            color: INDIGO_TEXT,
+                            textDecoration: "none",
+                          }}
+                        >
+                          {s.ticker}
+                        </Link>
+                      </td>
+                      <td style={{ padding: "11px 14px" }}>
+                        <Link
+                          href={`/stocks/${s.ticker}`}
+                          className="sf-name-link"
+                          style={{
+                            fontSize: 13,
+                            fontWeight: 500,
+                            color: "#e2e8f0",
+                            whiteSpace: "nowrap",
+                            textDecoration: "none",
+                            display: "block",
+                          }}
+                        >
+                          {s.name}
+                        </Link>
+                      </td>
+                      <td style={{ padding: "11px 14px" }}>
+                        <p
+                          style={{
+                            fontSize: 12,
+                            color: TEXT_TER,
+                            maxWidth: 180,
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                          }}
+                        >
+                          {getAiCategoryLabel(s)}
+                        </p>
+                      </td>
+                      <td style={{ padding: "11px 14px" }}>
+                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                          <ScoreBadge score={s.score} />
+                          <StarRating score={s.score} />
+                        </div>
+                      </td>
+                      <td style={{ padding: "11px 14px", textAlign: "right" }}>
+                        <span style={{ fontSize: 13, color: TEXT_SEC, fontVariantNumeric: "tabular-nums" }}>
+                          {s.aiRevMid != null ? formatAiRevenue(s.aiRevMid) : <span style={{ fontSize: 11, color: TEXT_TER, fontStyle: "italic" }}>データ不足</span>}
+                        </span>
+                      </td>
+                      <td style={{ padding: "11px 14px", textAlign: "right" }}>
+                        {growth != null ? (
+                          <span style={{ fontSize: 13, fontVariantNumeric: "tabular-nums", color: growthColor }}>
+                            {growthStr}
+                          </span>
+                        ) : (
+                          <span style={{ fontSize: 11, color: TEXT_TER, fontStyle: "italic" }}>データ不足</span>
+                        )}
+                      </td>
+                      <td style={{ padding: "11px 14px" }}>
+                        <DepBadge label={s.dependencyLabel} level={s.dependencyLevel} />
+                      </td>
+                      <td style={{ padding: "11px 14px", textAlign: "center" }}>
+                        <TierBadge tier={s.tier} />
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          {filtered.length === 0 && (
+            <div style={{ padding: "48px 0", textAlign: "center", color: TEXT_TER, fontSize: 14 }}>
+              該当する銘柄がありません
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Column guide */}
+      <div
         style={{
-          border: "1px solid rgba(255,255,255,0.1)",
-          background: "rgba(255,255,255,0.05)",
-          borderRadius: 16,
-          padding: 14,
-          marginBottom: 14,
+          background: CARD_BG,
+          border: BORDER,
+          borderRadius: 14,
+          padding: "20px 22px",
+          marginBottom: 20,
         }}
       >
-        <h2 style={{ fontSize: 20, marginBottom: 8 }}>AI産業マップ（カテゴリ別）</h2>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))", gap: 10 }}>
-          {categoryEntries.map(([category, stocks]) => (
-            <div
-              key={category}
-              style={{
-                border: "1px solid rgba(255,255,255,0.1)",
-                background: "rgba(255,255,255,0.03)",
-                borderRadius: 12,
-                padding: 10,
-              }}
-            >
-              <h3 style={{ fontSize: 16, marginBottom: 6 }}>{category}</h3>
-              <p style={{ opacity: 0.7, margin: "0 0 6px", fontSize: 12 }}>
-                {getCategoryDescription(category)}
+        <h3 style={{ fontSize: 13, fontWeight: 600, color: TEXT_SEC, marginBottom: 16 }}>
+          各列の見方
+        </h3>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+            gap: "12px 28px",
+          }}
+        >
+          {COLUMN_GUIDE.map((col) => (
+            <div key={col.label}>
+              <p style={{ fontSize: 12, fontWeight: 600, color: "#e2e8f0", marginBottom: 3 }}>
+                {col.label}
               </p>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: "4px 10px" }}>
-                {stocks.map((stock) => (
-                  <Link
-                    key={`${category}-${stock.ticker}`}
-                    href={`/stocks/${stock.ticker}`}
-                    className="map-link"
-                    style={{ color: "rgba(255,255,255,0.88)", textDecoration: "none" }}
-                  >
-                    {stock.name}
-                  </Link>
-                ))}
-              </div>
+              <p style={{ fontSize: 12, lineHeight: 1.6, color: TEXT_TER }}>{col.desc}</p>
             </div>
           ))}
         </div>
-      </section>
-
-      <style>{`
-        .map-link {
-          transition: color 0.15s ease;
-        }
-        .map-link:hover {
-          color: rgba(255,255,255,1);
-        }
-      `}</style>
-
-      <div style={{ border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, overflowX: "auto" }}>
-        <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 980 }}>
-          <thead>
-            <tr style={{ background: "rgba(255,255,255,0.05)" }}>
-              <th style={{ textAlign: "right", borderBottom: "1px solid rgba(255,255,255,0.2)", padding: 10 }}>順位</th>
-              <th style={{ textAlign: "left", borderBottom: "1px solid rgba(255,255,255,0.2)", padding: 10 }}>ティッカー</th>
-              <th style={{ textAlign: "left", borderBottom: "1px solid rgba(255,255,255,0.2)", padding: 10 }}>企業名</th>
-              <th style={{ textAlign: "left", borderBottom: "1px solid rgba(255,255,255,0.2)", padding: 10 }}>AI期待度</th>
-              <th style={{ textAlign: "right", borderBottom: "1px solid rgba(255,255,255,0.2)", padding: 10 }}>AI関連売上の目安（百万ドル）</th>
-              <th style={{ textAlign: "right", borderBottom: "1px solid rgba(255,255,255,0.2)", padding: 10 }}>AIの伸び（%）</th>
-              <th style={{ textAlign: "right", borderBottom: "1px solid rgba(255,255,255,0.2)", padding: 10 }}>AIとの結びつき</th>
-              <th style={{ textAlign: "left", borderBottom: "1px solid rgba(255,255,255,0.2)", padding: 10 }}>データの確からしさ</th>
-              <th style={{ textAlign: "left", borderBottom: "1px solid rgba(255,255,255,0.2)", padding: 10 }}>基準月</th>
-              <th style={{ textAlign: "left", borderBottom: "1px solid rgba(255,255,255,0.2)", padding: 10 }}>AIカテゴリ</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredItems.map((stock, index) => {
-              const missing = stock.score == null;
-              return (
-                <tr
-                  key={stock.ticker}
-                  style={missing ? { opacity: 0.7, background: "rgba(255,255,255,0.02)" } : undefined}
-                >
-                  <td style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", padding: 10, textAlign: "right", fontVariantNumeric: "tabular-nums" }}>
-                    {index + 1}
-                  </td>
-                  <td style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", padding: 10 }}>
-                    <Link href={`/stocks/${stock.ticker}`}>{stock.ticker}</Link>
-                  </td>
-                  <td style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", padding: 10 }}>
-                    <Link href={`/stocks/${stock.ticker}`}>{stock.name}</Link>
-                  </td>
-                  <td style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", padding: 10 }}>
-                    {stock.score == null ? (
-                      <>
-                        データ不足
-                        <div style={{ fontSize: 11, opacity: 0.72, marginTop: 3 }}>
-                          一次情報の追加確認中
-                        </div>
-                      </>
-                    ) : (
-                      `${stock.score} (${toStars(stock.score)})`
-                    )}
-                    {stock.scoreReasonLabels && stock.scoreReasonLabels.length > 0 ? (
-                      <div style={{ fontSize: 11, opacity: 0.72, marginTop: 3 }}>
-                        {stock.scoreReasonLabels.slice(0, 2).join(" / ")}
-                      </div>
-                    ) : null}
-                  </td>
-                  <td style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", padding: 10, textAlign: "right", fontVariantNumeric: "tabular-nums" }}>
-                    {formatAiRevenue(stock.aiRevMid)}
-                  </td>
-                  <td style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", padding: 10, textAlign: "right", fontVariantNumeric: "tabular-nums" }}>
-                    {formatGrowthDiff(stock.growthDiff)}
-                  </td>
-                  <td style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", padding: 10, textAlign: "right", fontVariantNumeric: "tabular-nums" }}>
-                    {stock.dependencyLabel ?? formatValue(stock.dependencyLevel)}
-                  </td>
-                  <td style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", padding: 10 }}>{formatValue(stock.tier)}</td>
-                  <td style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", padding: 10 }}>{formatUpdatedMonth(stock.updatedMonth)}</td>
-                  <td style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", padding: 10 }}>{getAiCategory(stock)}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
       </div>
-    </>
+
+      {/* Disclaimer */}
+      <div
+        style={{
+          background: "rgba(251,191,36,0.07)",
+          border: "1px solid rgba(251,191,36,0.2)",
+          borderRadius: 12,
+          padding: "14px 18px",
+          display: "flex",
+          alignItems: "flex-start",
+          gap: 10,
+        }}
+      >
+        <span style={{ color: "#fbbf24", fontSize: 14, flexShrink: 0 }}>⚠</span>
+        <p style={{ fontSize: 12, lineHeight: 1.7, color: "#fcd34d" }}>
+          本サイトは参考情報の整理を目的としており、
+          <strong>投資助言ではありません。</strong>
+          最終的な投資判断はご自身の責任で行ってください。掲載情報の正確性・完全性・最新性は保証しません。
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function TierBadge({ tier }: { tier: string | null }) {
+  if (!tier) return <span style={{ fontSize: 11, color: TEXT_TER, fontStyle: "italic" }}>—</span>;
+  const color =
+    tier === "A" ? "#6ee7b7" : tier === "B" ? "#93c5fd" : TEXT_TER;
+  const bg =
+    tier === "A" ? "rgba(52,211,153,0.1)" : tier === "B" ? "rgba(96,165,250,0.1)" : "rgba(255,255,255,0.04)";
+  return (
+    <span
+      style={{
+        fontSize: 12,
+        fontWeight: 700,
+        padding: "2px 8px",
+        borderRadius: 5,
+        background: bg,
+        color,
+      }}
+    >
+      {tier}
+    </span>
+  );
+}
+
+function ThemeChip({
+  label,
+  active,
+  onClick,
+}: {
+  label: string;
+  active: boolean;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      style={{
+        fontSize: 11,
+        fontWeight: 500,
+        padding: "4px 10px",
+        borderRadius: 7,
+        border: active ? "1px solid rgba(99,102,241,0.35)" : "1px solid rgba(255,255,255,0.06)",
+        background: active ? "rgba(99,102,241,0.15)" : "rgba(255,255,255,0.04)",
+        color: active ? "#a5b4fc" : TEXT_TER,
+        cursor: "pointer",
+        transition: "all 0.15s",
+        maxWidth: 200,
+        overflow: "hidden",
+        textOverflow: "ellipsis",
+        whiteSpace: "nowrap",
+      }}
+    >
+      {label}
+    </button>
   );
 }

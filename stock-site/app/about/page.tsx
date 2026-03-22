@@ -1,4 +1,8 @@
 import type { Metadata } from "next";
+import {
+  StaticPageLayout,
+  StaticSectionCard,
+} from "../../components/static/StaticPageLayout";
 
 export const metadata: Metadata = {
   title: "このサイトについて | AI Stock Data",
@@ -11,41 +15,55 @@ export const metadata: Metadata = {
 
 export default function AboutPage() {
   return (
-    <main className="mx-auto max-w-3xl px-6 py-14 text-neutral-100">
-      <section className="rounded-2xl border border-white/10 bg-white/5 p-6">
-        <h1 className="mb-3 text-3xl font-semibold">このサイトについて</h1>
-        <p className="mb-4 leading-7 text-white/85">
-          AI Stock Data は、AI関連銘柄を比較しやすく整理するための情報サイトです。AIとの関わり方や事業の特徴を、なるべく分かりやすい形で確認できるようにしています。
-        </p>
+    <StaticPageLayout breadcrumb="このサイトについて">
+      <h1
+        style={{
+          fontSize: "clamp(22px,4vw,28px)",
+          fontWeight: 700,
+          letterSpacing: "-0.02em",
+          color: "#f1f5f9",
+          marginBottom: 16,
+        }}
+      >
+        このサイトについて
+      </h1>
+      <p
+        style={{
+          fontSize: 14,
+          lineHeight: 1.85,
+          color: "#cbd5e1",
+          marginBottom: 28,
+          maxWidth: 640,
+        }}
+      >
+        AI Stock Data は、AI関連銘柄を比較しやすく整理するための情報サイトです。AIとの関わり方や事業の特徴を、なるべく分かりやすい形で確認できるようにしています。
+      </p>
 
-        <section className="mb-5">
-          <h2 className="mb-2 text-xl font-semibold">サイトの目的</h2>
-          <p className="leading-7 text-white/80">
+      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+        <StaticSectionCard title="サイトの目的">
+          <p style={{ fontSize: 14, lineHeight: 1.85, color: "#cbd5e1" }}>
             AI関連企業の情報は散らばりやすいため、売上規模、成長、カテゴリ、関連性などを一覧で見比べやすく整理することを目的としています。
           </p>
-        </section>
+        </StaticSectionCard>
 
-        <section className="mb-5">
-          <h2 className="mb-2 text-xl font-semibold">どんな人向けか</h2>
-          <p className="leading-7 text-white/80">
+        <StaticSectionCard title="どんな人向けか">
+          <p style={{ fontSize: 14, lineHeight: 1.85, color: "#cbd5e1" }}>
             AI関連銘柄を調べ始めた方や、複数企業の位置づけをまとめて確認したい方を主な対象としています。
           </p>
-        </section>
+        </StaticSectionCard>
 
-        <section className="mb-5">
-          <h2 className="mb-2 text-xl font-semibold">スコアや分類について</h2>
-          <p className="leading-7 text-white/80">
+        <StaticSectionCard title="スコアや分類について">
+          <p style={{ fontSize: 14, lineHeight: 1.85, color: "#cbd5e1" }}>
             掲載しているスコアやカテゴリは、情報整理をしやすくするための目安です。最終的な判断の前に、各社の決算資料や公式開示などの一次情報もあわせて確認することをおすすめします。
           </p>
-        </section>
+        </StaticSectionCard>
 
-        <section>
-          <h2 className="mb-2 text-xl font-semibold">今後の更新</h2>
-          <p className="leading-7 text-white/80">
+        <StaticSectionCard title="今後の更新">
+          <p style={{ fontSize: 14, lineHeight: 1.85, color: "#cbd5e1" }}>
             掲載内容は順次見直しながら更新しています。企業情報や分類、説明文なども今後の更新でより分かりやすく整えていく予定です。
           </p>
-        </section>
-      </section>
-    </main>
+        </StaticSectionCard>
+      </div>
+    </StaticPageLayout>
   );
 }

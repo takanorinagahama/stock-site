@@ -73,7 +73,7 @@ export function HeroSection({ count, asOfMonth }: HeroSectionProps) {
             style={{
               fontSize: 15,
               lineHeight: 1.8,
-              color: "#94a3b8",
+              color: "#cbd5e1",
               maxWidth: 520,
               marginBottom: 8,
             }}
@@ -83,7 +83,7 @@ export function HeroSection({ count, asOfMonth }: HeroSectionProps) {
           </p>
 
           {/* meta */}
-          <p style={{ fontSize: 13, color: "#64748b", marginBottom: 32 }}>
+          <p style={{ fontSize: 13, color: "#94a3b8", marginBottom: 32 }}>
             収録銘柄: {count} 社　／　基準月: {asOfMonth ?? "—"}
           </p>
 

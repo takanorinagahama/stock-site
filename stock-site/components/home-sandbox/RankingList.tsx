@@ -12,7 +12,7 @@ function ScoreBadge({ score }: { score: number }) {
     color = "#93c5fd";
   } else if (score < 40) {
     bg = "rgba(148,163,184,0.08)";
-    color = "#64748b";
+    color = "#94a3b8";
   }
   return (
     <div
@@ -59,7 +59,7 @@ export function RankingList({ stocks }: RankingListProps) {
           >
             AI期待度ランキング TOP5
           </h2>
-          <p style={{ fontSize: 13, color: "#64748b", marginTop: 4 }}>
+          <p style={{ fontSize: 13, color: "#94a3b8", marginTop: 4 }}>
             スコアの高い銘柄を参考に確認できます
           </p>
         </div>
@@ -105,7 +105,7 @@ export function RankingList({ stocks }: RankingListProps) {
               style={{
                 fontSize: 13,
                 fontWeight: 600,
-                color: "#475569",
+                color: "#94a3b8",
                 width: 20,
                 textAlign: "center",
                 flexShrink: 0,
@@ -133,11 +133,11 @@ export function RankingList({ stocks }: RankingListProps) {
                 >
                   {stock.ticker}
                 </span>
-                <span style={{ fontSize: 12, color: "#64748b" }}>
+                <span style={{ fontSize: 12, color: "#94a3b8" }}>
                   {stock.name}
                 </span>
               </div>
-              <span style={{ fontSize: 11, color: "#475569" }}>
+              <span style={{ fontSize: 11, color: "#94a3b8" }}>
                 {stock.categoryJa ?? stock.aiCategory ?? "—"}
               </span>
             </div>
@@ -152,7 +152,7 @@ export function RankingList({ stocks }: RankingListProps) {
               }}
             >
               {stock.score !== null && <ScoreBadge score={stock.score} />}
-              <span style={{ fontSize: 14, color: "#475569" }}>›</span>
+              <span style={{ fontSize: 14, color: "#94a3b8" }}>›</span>
             </div>
           </Link>
         ))}
