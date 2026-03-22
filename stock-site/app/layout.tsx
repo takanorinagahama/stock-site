@@ -55,30 +55,92 @@ export default function RootLayout({
           crossOrigin="anonymous"
         />
       </head>
-      <body>
+      <body style={{ margin: 0, padding: 0, background: "#0c1118" }}>
         {children}
         <footer
           style={{
-            maxWidth: 980,
-            margin: "40px auto 24px",
-            padding: "0 24px",
-            color: "rgba(255,255,255,0.72)",
+            borderTop: "1px solid rgba(255,255,255,0.06)",
+            background: "#0a0e14",
           }}
         >
           <div
             style={{
-              borderTop: "1px solid rgba(255,255,255,0.1)",
-              paddingTop: 14,
+              maxWidth: 1152,
+              margin: "0 auto",
+              padding: "32px 20px",
               display: "flex",
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
               flexWrap: "wrap",
-              gap: "8px 16px",
-              fontSize: 13,
+              gap: 24,
             }}
           >
-            <Link href="/about">このサイトについて</Link>
-            <Link href="/privacy">プライバシーポリシー</Link>
-            <Link href="/disclaimer">免責事項</Link>
-            <Link href="/contact">お問い合わせ</Link>
+            {/* Brand */}
+            <div>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 8,
+                  marginBottom: 8,
+                }}
+              >
+                <div
+                  style={{
+                    width: 24,
+                    height: 24,
+                    borderRadius: 4,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    background: "rgba(99,102,241,0.12)",
+                    fontSize: 11,
+                    color: "#f1f5f9",
+                  }}
+                >
+                  ⬡
+                </div>
+                <span
+                  style={{ fontSize: 13, fontWeight: 600, color: "#cbd5e1" }}
+                >
+                  AI Stock Data
+                </span>
+              </div>
+              <p
+                style={{
+                  fontSize: 11,
+                  lineHeight: 1.7,
+                  color: "#94a3b8",
+                  maxWidth: 280,
+                  margin: 0,
+                }}
+              >
+                AI関連銘柄を比較しやすく整理するための参考情報サイトです。投資助言ではありません。
+              </p>
+            </div>
+
+            {/* Nav links */}
+            <nav style={{ display: "flex", flexWrap: "wrap", gap: "8px 20px" }}>
+              {[
+                { label: "このサイトについて", href: "/about" },
+                { label: "プライバシーポリシー", href: "/privacy" },
+                { label: "免責事項", href: "/disclaimer" },
+                { label: "お問い合わせ", href: "/contact" },
+              ].map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  style={{
+                    fontSize: 12,
+                    color: "#94a3b8",
+                    textDecoration: "none",
+                  }}
+                >
+                  {item.label}
+                </Link>
+              ))}
+            </nav>
           </div>
         </footer>
       </body>
