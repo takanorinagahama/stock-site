@@ -1,52 +1,91 @@
 import type { FeatureArticle } from "../../lib/features/types";
+
 export const article: FeatureArticle = {
   slug: "ai-earnings-proof",
   title: "決算で分かる 本当にAIで稼いでいる会社の見分け方",
-  summary: "「AI関連」と名乗る企業は多数ありますが、実際に決算でAI収益を計上しているかどうかは大きく異なります。決算資料のどこを見れば「本物のAI収益」が確認できるかを解説します。",
+  summary:
+    "「AI関連」を掲げる会社は多いが、実際にAIが業績へ効いているかどうかは決算を見るまで分からない。売上成長への寄与、受注・受注残、受注構成という3つの観点で、AIの実績をどう見抜くかを一次ソースだけで整理する。",
   category: "決算ベース",
-  updatedAt: "2026-03-10",
+  updatedAt: "2026-03-23",
   featured: true,
-  relatedThemes: ["ai-semiconductor-stocks", "ai-infrastructure-stocks"],
-  relatedStocks: ["NVDA", "MSFT", "AMZN", "GOOGL"],
+  relatedThemes: ["ai-software-platform-stocks", "ai-infrastructure-stocks"],
+  relatedStocks: ["MSFT", "DELL", "SAP"],
   sections: [
     {
-      heading: "「AI関連」と「AIで稼いでいる」は別物",
+      heading: "AI関連と、AIで稼いでいることは別の話",
       paragraphs: [
-        "多くの企業が「AI戦略」を発表していますが、実際にAIから収益を得ているかどうかは決算資料を読まなければわかりません。AI関連株を評価する際には、「AIに投資している企業」ではなく「AIから売上・利益を得ている企業」を見極めることが重要です。",
-        "ここでは、決算発表で確認すべき具体的な指標や発言を整理します。",
+        "AI関連と名乗る会社は多い。だが、投資判断で本当に見たいのは、AIという言葉が売上や受注にどう接続しているかだ。テーマとしてAIを語ることと、AIで実際に稼いでいることは同じではない。",
+        "決算で確認しやすい開示は、大きく3つに整理できる。AIが売上成長に何ポイント寄与したか。AI関連の受注や受注残がいくらあるか。AIが受注構成やバックログの中でどれだけ存在感を持っているか。この3つだ。",
       ],
     },
     {
-      heading: "チェックポイント①：セグメント別売上への明示",
+      heading: "見分け方1：AIが売上成長に何ポイント効いたか",
       paragraphs: [
-        "最も信頼性が高いのは、決算発表でAI関連売上が数字として開示されている場合です。NVIDIAの「データセンター事業」売上はその典型例で、AIチップ（H100/H200等）向け需要が直接反映されています。",
-        "セグメント別の開示がない場合でも、決算説明会（アーニングスコール）のトランスクリプトで「AI due to...」「AI-driven revenue...」などの表現がどの程度具体的かを確認する方法があります。",
+        "もっとも強い開示は、AIが売上成長にどれだけ寄与したかを数字で示すものだ。MicrosoftはFY25 Q2の業績ページで、Azureとその他クラウドサービス売上が31%成長し、そのうち13ポイントがAIサービスによるものだと説明している。さらにAIサービス自体は157%成長とされている。",
+        "ここまで出てくると、「AIをやっている」ではなく、「AIがすでに売上成長を押し上げている」と読める。AI関連株を見るとき、まず確認したいのはこの接続だ。",
       ],
     },
     {
-      heading: "チェックポイント②：クラウド事業のAI起因成長",
+      heading: "見分け方2：AI関連の受注や受注残があるか",
       paragraphs: [
-        "Microsoft、Amazon、Googleの3社では、クラウド事業（Azure/AWS/Google Cloud）の成長率がAI需要をある程度反映しています。各社のアーニングスコールでは「AI contributed X points to cloud growth」のような表現が登場するケースがあります。",
-        "特にMicrosoftは「Copilot」系製品の課金ユーザー数やAzureのAIサービス収益に関して開示度が高く、比較的追いやすいです。",
+        "次に強いのは、AI案件の受注や受注残の開示だ。Dellは2025年11月の投資家向けトランスクリプトで、AIサーバー需要が過去最高の123億ドル受注、56億ドル出荷、期末受注残184億ドルに達したと説明している。",
+        "同じ開示では、Servers and Networking売上が101億ドルで前年比37%増とも述べている。売上だけでなく、受注と受注残の積み上がりが見えると、AI需要が一過性なのか継続性を持つのかを見分けやすい。",
       ],
     },
     {
-      heading: "チェックポイント③：設備投資（CapEx）の増加傾向",
+      heading: "見分け方3：AIが受注構成の中でどれだけ入り込んでいるか",
       paragraphs: [
-        "AIインフラを整備している企業では、設備投資額の増加がAI需要への対応を示すシグナルになります。Google、Meta、MicrosoftのCapExはここ数四半期で急増しており、これはAI向けデータセンター構築への投資が主因とされています。",
-        "CapEx増加はコスト増を意味しますが、「将来のAI収益への先行投資」と評価されることが多いです。",
+        "SaaSやクラウド企業では、AI売上を単独で切り出さず、受注構成やバックログの中で存在感を示すことがある。SAPは2025年通期業績で、Q4のクラウド受注の3分の2にSAP Business AIが含まれていたと説明している。",
+        "同時に、Total Cloud Backlogは770億ユーロで前年比30%増と開示している。こうした企業では、「AI売上はいくらか」だけを探すより、受注にどれだけAIが入り込んでいるかを見るほうが実態に近い。",
       ],
     },
     {
-      heading: "まとめ：数字で語れるAI企業を選ぶ",
+      heading: "逆に、弱い開示はどんなものか",
       paragraphs: [
-        "AI関連銘柄を評価する際は、①セグメント別AI売上の開示、②クラウド成長率とAI貢献、③CapEx増加と投資の方向性、の3点を確認することが基本です。",
-        "このサイトの銘柄詳細ページでは、各社のAI売上比率（推定）や成長力スコアを掲載しています。決算ベースの評価と合わせてご活用ください。",
+        "逆に弱いのは、AIの話は多いのに、売上・受注・成長率への接続がないケースだ。説明会でAI戦略を大きく語っていても、決算資料に数量的な裏づけがなければ、投資家としては慎重に見たほうがいい。",
+        "Microsoftの13ポイント、Dellの受注・出荷・受注残、SAPのクラウド受注構成のように、AIと業績が数字でつながっている開示ほど、実績として評価しやすい。",
+      ],
+    },
+    {
+      heading: "決算を見るときのチェックリスト",
+      paragraphs: [
+        "決算でAIを確認するときは、順番を決めて見ると整理しやすい。まず、AIが売上成長に寄与したか。次に、AI関連の受注や受注残があるか。最後に、AIが受注構成やバックログの中でどこまで入り込んでいるか。この3つだ。",
+        "この3つが揃うほど、「AIで稼いでいる会社」に近い。逆に、定性的な説明しかない企業は、テーマ株として注目されていても、業績の裏付けはまだ弱い可能性がある。",
+      ],
+    },
+    {
+      heading: "まとめ",
+      paragraphs: [
+        "本当にAIで稼いでいる会社を見分けるには、AIという言葉そのものではなく、AIが売上、受注、バックログにどう出ているかを見るのが基本になる。",
+        "現時点で見やすい開示としては、Microsoftの売上成長寄与、Dellの受注と受注残、SAPの受注構成が分かりやすい。AI関連株を追うときは、テーマの強さより先に、決算の数字がどこまで裏づけているかを見たほうがよい。",
       ],
     },
   ],
   sources: [
-    { label: "（仮）NVIDIA FY2025 Q4 Earnings Release", url: "#", publisher: "NVIDIA IR" },
-    { label: "（仮）Microsoft FY2025 Q2 Earnings Transcript", url: "#", publisher: "Microsoft IR" },
+    {
+      label: "Microsoft FY25 Q2 Intelligent Cloud Performance",
+      url: "https://www.microsoft.com/en-us/investor/earnings/fy-2025-q2/intelligent-cloud-performance",
+      publisher: "Microsoft",
+    },
+    {
+      label: "Microsoft FY25 Q2 Earnings Call",
+      url: "https://www.microsoft.com/en-us/investor/events/fy-2025/earnings-fy-2025-q2",
+      publisher: "Microsoft",
+    },
+    {
+      label: "Dell Technologies Investor Transcript (Nov 25, 2025)",
+      url: "https://investors.delltechnologies.com/static-files/9d07092c-7a61-42be-a1c2-54aea7465d17",
+      publisher: "Dell Technologies",
+    },
+    {
+      label: "SAP Recent Results / Q4 and FY 2025",
+      url: "https://www.sap.com/investors/en/financial-documents-and-events/recent-results.html",
+      publisher: "SAP",
+    },
+    {
+      label: "SAP 2025 Annual Report on Form 20-F",
+      url: "https://www.sap.com/docs/download/investors/2025/sap-2025-annual-report-form-20f.pdf",
+      publisher: "SAP",
+    },
   ],
 };
