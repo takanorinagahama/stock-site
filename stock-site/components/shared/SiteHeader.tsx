@@ -59,6 +59,7 @@ export function SiteHeader() {
           {[
             { label: "テーマ一覧", href: "/themes" },
             { label: "銘柄一覧", href: "/stocks" },
+            { label: "特集", href: "/features" },
           ].map((item) => (
             <Link
               key={item.href}

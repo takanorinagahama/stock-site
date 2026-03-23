@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { getAllThemeSlugs } from "../lib/themes";
+import { getAllFeatureSlugs } from "../lib/features";
 
 const siteUrl = "https://ai-stock-data.com";
 
@@ -49,6 +50,18 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: "monthly",
       priority: 0.4,
     },
+    {
+      url: `${siteUrl}/features`,
+      lastModified: now,
+      changeFrequency: "weekly" as const,
+      priority: 0.8,
+    },
+    ...getAllFeatureSlugs().map((slug) => ({
+      url: `${siteUrl}/features/${slug}`,
+      lastModified: now,
+      changeFrequency: "weekly" as const,
+      priority: 0.7,
+    })),
     ...getAllThemeSlugs().map((slug) => ({
       url: `${siteUrl}/themes/${slug}`,
       lastModified: now,
