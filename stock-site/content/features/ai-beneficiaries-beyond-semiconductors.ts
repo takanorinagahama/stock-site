@@ -1,52 +1,84 @@
 import type { FeatureArticle } from "../../lib/features/types";
+
 export const article: FeatureArticle = {
   slug: "ai-beneficiaries-beyond-semiconductors",
   title: "AI半導体以外の恩恵株とは？関連銘柄と注目分野を整理",
-  summary: "NVIDIAのような半導体企業だけがAI恩恵を受けているわけではありません。クラウド、ソフトウェア、電力、データセンターなど、AI普及によって恩恵を受ける多様な分野と代表銘柄を整理します。",
+  summary:
+    "AI相場では半導体が主役に見えやすいが、実際に需要が広がっているのはデータセンター、電力・冷却、クラウド、既存ソフトウェアまで含む広いレイヤーだ。半導体の外側で何が伸びるのかを、公式開示ベースで整理する。",
   category: "テーマ深掘り",
-  updatedAt: "2026-03-01",
+  updatedAt: "2026-03-23",
   featured: true,
-  relatedThemes: ["ai-infrastructure-stocks", "data-center-stocks", "ai-software-platform-stocks"],
-  relatedStocks: ["MSFT", "AMZN", "GOOGL", "NEE"],
+  relatedThemes: [
+    "ai-infrastructure-stocks",
+    "data-center-stocks",
+    "ai-software-platform-stocks",
+    "energy-power-infrastructure-stocks",
+  ],
+  relatedStocks: ["MSFT", "EQIX", "VRT", "SAP"],
   sections: [
     {
-      heading: "AIブームの恩恵は半導体だけではない",
+      heading: "AIブームの恩恵は、半導体だけでは終わらない",
       paragraphs: [
-        "生成AIの急速な普及により、NVIDIAやTSMCといった半導体企業が大きく注目を集めています。しかし、AIインフラの普及は半導体に留まらず、幅広い産業に波及しています。",
-        "電力消費量の急増に伴う電力・エネルギー企業、AIモデルを動かすクラウドインフラ企業、AIを活用したソフトウェアサービス企業など、恩恵の形は多岐にわたります。",
+        "AI関連株というと、まずNVIDIAのような半導体企業が思い浮かぶ。実際、計算需要の拡大を最も分かりやすく受けるのはGPUやHBMの供給網だ。だが、AIの需要はそこで完結しない。モデルを動かすためのデータセンター、そこへ電力を供給する設備、発熱を処理する冷却、さらにAI機能を既存ソフトウェアへ実装する企業群にも、需要は確実に広がっている。",
+        "Microsoftは2025年の年次報告書で、70地域に400超のデータセンターを運営し、同年度だけで2ギガワット超の新規容量を追加したと説明している。さらに、すべてのAzureリージョンがAI-firstで液冷対応可能だとしており、AI対応インフラへの投資がクラウド側で大きく進んでいることが分かる。",
       ],
     },
     {
-      heading: "クラウド・インフラ：AIを動かす基盤",
+      heading: "クラウド・データセンターは、AI需要の受け皿になる",
       paragraphs: [
-        "Microsoft（MSFT）、Amazon（AMZN）、Alphabet（GOOGL）の3社は、AIモデルのトレーニングと推論を支えるクラウドインフラを提供しています。AI需要の増加はクラウド売上の直接的な押し上げ要因となっています。",
-        "特にMicrosoftはOpenAIとの提携を通じてAzureへのAIワークロード誘導を進めており、Copilot製品群のエンタープライズ導入も加速しています。",
+        "AI需要を最初に受けるのは、半導体を実際に収容し、運用するクラウドとデータセンターだ。AIワークロードは一般的なクラウド利用よりも高密度の計算資源を必要とするため、設備の拡張がそのままテーマの広がりになる。",
+        "Equinixは2024年10-Kで、AIの導入が進むなか、新しいIBXデータセンターでは従来のIBXの2倍の電力・冷却ニーズを支える必要があると説明している。AIの波がデータセンター事業者に与える影響は、単なる需要増ではなく、設備仕様そのものの変化として表れている。",
       ],
     },
     {
-      heading: "電力・データセンター：見落とされがちな恩恵先",
+      heading: "電力・冷却は、AIインフラの制約条件になりやすい",
       paragraphs: [
-        "AIの推論・学習には膨大な電力が必要です。データセンターの電力需要は急増しており、NextEra Energy（NEE）などの再生可能エネルギー企業や、データセンター向けREITが注目されています。",
-        "米国では大手テック企業が再生可能エネルギーの長期契約（PPA）を積極的に締結しており、電力企業の安定収益源となっています。",
+        "AI投資が本格化すると、話題はすぐに「何枚GPUを積むか」から「その電力をどう供給するか」「その熱をどう逃がすか」に移る。設備の現場では、半導体以上に電力と冷却がボトルネックになりやすい。",
+        "Vertivは2025年6月、NVIDIA GB300 NVL72向けの参照アーキテクチャを発表し、ラック密度が最大142kWに達する設計を示した。AIファクトリー級の設備では、電源・冷却・実装を一体で考えなければ運用できないことが、かなりはっきりしている。",
       ],
     },
     {
-      heading: "ソフトウェア：AIを組み込んだ既存ビジネスの変革",
+      heading: "既存ソフトウェア企業にも、AIの恩恵は広がる",
       paragraphs: [
-        "CRM、ERP、セキュリティなどの既存SaaS企業も、自社製品にAI機能を組み込むことで競争力を高めています。Salesforce、ServiceNow、Palantirなどはその代表例です。",
-        "これらの企業は、AIを「新機能」として追加課金することで、ARPU（顧客単価）の向上を図っています。",
+        "AIの恩恵は、ハードウェアやデータセンターだけではない。既存の業務ソフトウェアやクラウドアプリにAI機能を組み込み、単価や契約規模を押し上げる企業も増えている。",
+        "SAPは2025年通期決算で、Q4のクラウド受注の3分の2にSAP Business AIが含まれていたと説明している。AIを単独製品として売るだけでなく、既存のERPや業務システムの受注に組み込む形で収益化している点は、ソフトウェア企業の見方として重要だ。",
       ],
     },
     {
-      heading: "まとめ：テーマ別に恩恵先を整理することの意義",
+      heading: "半導体の外側を見るときの観察ポイント",
       paragraphs: [
-        "AI投資を考えるうえで、半導体だけでなく複数の分野を横断的に把握することが重要です。このサイトではテーマ別に銘柄を整理しており、半導体以外の恩恵先も比較できます。",
-        "「AI半導体」「AIインフラ」「AIソフトウェア」「エネルギー・電力」の各テーマページから、代表銘柄の詳細を確認してください。",
+        "このテーマで銘柄を見るなら、注目点は3つある。ひとつ目は、容量増設や設備仕様の変化が数字で見えるか。ふたつ目は、電力や冷却のような物理制約が経営陣の言葉として出ているか。三つ目は、AIという言葉が売上や受注へ実際につながっているかどうかだ。",
+        "「AIに注力している」という説明だけでは弱い。データセンター容量、電力・冷却要件、受注構成のような具体的な開示が出ている企業のほうが、テーマの実需を追いやすい。",
+      ],
+    },
+    {
+      heading: "まとめ",
+      paragraphs: [
+        "AI半導体以外の恩恵株を考えるとき、出発点はクラウド・データセンター、電力・冷却、そしてAIを既存業務に組み込むソフトウェア企業だ。半導体の外側に何が必要かを順番にたどると、AI相場の裾野はかなり広い。",
+        "AI関連株を広く見たいなら、まずは半導体の次に何が必要かという観点で、設備・電力・ソフトウェアの3レイヤーを並べてみると整理しやすい。",
       ],
     },
   ],
   sources: [
-    { label: "（仮）各社決算発表資料", url: "#", publisher: "各社IR" },
-    { label: "（仮）IEA Data Center Energy Report", url: "#", publisher: "IEA" },
+    {
+      label: "Microsoft 2025 Annual Report",
+      url: "https://www.microsoft.com/investor/reports/ar25/index.html",
+      publisher: "Microsoft",
+    },
+    {
+      label: "Equinix 2024 Annual Report (10-K)",
+      url: "https://investor.equinix.com/sec-filings/annual-reports/content/0001628280-25-005126/0001628280-25-005126.pdf",
+      publisher: "Equinix",
+    },
+    {
+      label: "Vertiv develops cooling and power reference architecture for NVIDIA GB300 NVL72",
+      url: "https://investors.vertiv.com/news/news-details/2025/Vertiv-Develops-Energy-Efficient-Cooling-and-Power-Reference-Architecture-for-the-NVIDIA-GB300-NVL72-Platform-Available-as-SimReady-Assets-in-NVIDIA-Omniverse-Blueprint-for-AI-Factory-Design-and-Operations/default.aspx",
+      publisher: "Vertiv",
+    },
+    {
+      label: "SAP Q4 and FY 2025 Results",
+      url: "https://www.sap.com/investors/en/financial-documents-and-events/recent-results.html",
+      publisher: "SAP",
+    },
   ],
 };
