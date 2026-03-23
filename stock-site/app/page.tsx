@@ -7,6 +7,7 @@ import { ThemeGrid } from "../components/home-sandbox/ThemeGrid";
 import { RankingList } from "../components/home-sandbox/RankingList";
 import { AboutCards } from "../components/home-sandbox/AboutCards";
 import { DisclaimerBanner } from "../components/home-sandbox/DisclaimerBanner";
+import { FeaturesSection } from "../components/home-sandbox/FeaturesSection";
 
 export const metadata: Metadata = {
   title: "AI Stock Data",
@@ -75,6 +76,7 @@ export default async function Home() {
       >
         <GuideCards />
         <ThemeGrid />
+        <FeaturesSection />
         {topStocks.length > 0 && <RankingList stocks={topStocks} />}
         <AboutCards />
         <DisclaimerBanner />
