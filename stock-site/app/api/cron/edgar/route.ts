@@ -17,7 +17,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getUsTickers, createFetchJob, finishFetchJob } from "../../../../lib/filings/repository";
 import { saveEdgarFilingsForTickers }                   from "../../../../lib/filings/save-edgar";
-import { notifyDiscordFailure }                         from "../../../../lib/filings/notify";
+import { notifyDiscordFailure, notifyDiscordSuccess }    from "../../../../lib/filings/notify";
 
 // Vercel Cron はレスポンスを最大 60s 待つ
 export const maxDuration = 60;
@@ -67,8 +67,20 @@ export async function GET(req: NextRequest) {
       );
     }
 
-    // ── Discord 通知（失敗があった場合のみ）───────────────────────────
-    if (failureCount > 0) {
+    // ── Discord 通知 ─────────────────────────────────────────────────
+    if (failureCount === 0) {
+      // 全銘柄成功 → 簡潔な 1行サマリー
+      await notifyDiscordSuccess({
+        source:       "edgar",
+        startedAt,
+        targetCount:  tickers.length,
+        successCount,
+        totalSaved,
+        totalSkipped,
+        jobId:        jobId ?? undefined,
+      });
+    } else {
+      // 一部失敗 → 詳細通知
       await notifyDiscordFailure({
         source:       "edgar",
         startedAt,
