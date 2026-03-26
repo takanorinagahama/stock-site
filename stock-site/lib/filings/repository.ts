@@ -105,6 +105,25 @@ export async function upsertFilings(filings: NormalizedFiling[]): Promise<Upsert
 
 // ── 取得 ─────────────────────────────────────────────────────────────────
 
+/**
+ * ticker の最新 filed_at を返す（差分保存の基準日として使用）
+ * テーブル未作成 / データなし の場合は null を返す
+ */
+export async function getLatestFilingDate(ticker: string): Promise<string | null> {
+  const sb = serviceClient();
+  const { data, error } = await sb
+    .from("filings")
+    .select("filed_at")
+    .eq("ticker", ticker.toUpperCase())
+    .eq("source", "edgar")
+    .order("filed_at", { ascending: false, nullsFirst: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error || !data) return null;
+  return (data as { filed_at: string | null }).filed_at ?? null;
+}
+
 /** ticker 別に保存済み filings を取得（公開ページ用）*/
 export async function getFilingsByTicker(
   ticker: string,

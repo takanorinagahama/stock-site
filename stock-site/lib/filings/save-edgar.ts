@@ -6,16 +6,17 @@
  * 3. 結果を { saved, skipped, error? } で返す
  */
 
-import { fetchEdgarFilings } from "./edgar";
-import { upsertFilings }      from "./repository";
+import { fetchEdgarFilings }       from "./edgar";
+import { upsertFilings, getLatestFilingDate } from "./repository";
 
 const DEFAULT_COUNT = 40; // 1銘柄あたりの取得件数（初回・日次バッチ共通）
 
 export interface SaveResult {
-  ticker:  string;
-  saved:   number;
-  skipped: number;
-  error?:  string;
+  ticker:      string;
+  saved:       number;
+  skipped:     number;
+  prefilterd?: number; // 差分フィルタで除外した件数
+  error?:      string;
 }
 
 /** 1銘柄分の EDGAR 書類を取得して保存する */
@@ -34,22 +35,36 @@ export async function saveEdgarFilingsForTicker(
     return { ticker, saved: 0, skipped: 0 };
   }
 
-  // 2. 保存
-  const upsertResult = await upsertFilings(fetchResult.filings);
+  // 2. 差分フィルタ（改善案A）
+  //    DB の最新 filed_at より古い・同日のものは upsert 対象から除外する
+  const latestDate = await getLatestFilingDate(ticker);
+  const toSave = latestDate
+    ? fetchResult.filings.filter((f) => f.filedAt > latestDate)
+    : fetchResult.filings;
+  const prefiltered = fetchResult.filings.length - toSave.length;
+
+  if (toSave.length === 0) {
+    return { ticker, saved: 0, skipped: fetchResult.filings.length, prefilterd: prefiltered };
+  }
+
+  // 3. 保存
+  const upsertResult = await upsertFilings(toSave);
 
   if (upsertResult.errors.length > 0) {
     return {
       ticker,
-      saved:   upsertResult.saved,
-      skipped: upsertResult.skipped,
-      error:   upsertResult.errors.join("; "),
+      saved:      upsertResult.saved,
+      skipped:    upsertResult.skipped,
+      prefilterd: prefiltered,
+      error:      upsertResult.errors.join("; "),
     };
   }
 
   return {
     ticker,
-    saved:   upsertResult.saved,
-    skipped: upsertResult.skipped,
+    saved:      upsertResult.saved,
+    skipped:    upsertResult.skipped,
+    prefilterd: prefiltered,
   };
 }
 
