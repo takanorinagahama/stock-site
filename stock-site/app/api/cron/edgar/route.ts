@@ -1,5 +1,5 @@
 /**
- * Vercel Cron エンドポイント — EDGAR 日次バッチ
+ * Vercel Cron エンドポイント — EDGAR 日次バッチ（対象: is_active=true 全銘柄）
  *
  * スケジュール: vercel.json に記載（JST 19:00 = UTC 10:00）
  *
