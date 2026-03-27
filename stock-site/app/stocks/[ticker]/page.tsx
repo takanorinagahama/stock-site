@@ -342,26 +342,24 @@ export default async function StockDetailPage({ params }: DetailPageProps) {
                 </a>
               ) : null}
               {/* 公開情報リンク（全銘柄表示） */}
-              {(
-                <Link
-                  href={`/stocks/${item.ticker}/filings`}
-                  style={{
-                    fontSize: 13,
-                    fontWeight: 500,
-                    padding: "6px 14px",
-                    borderRadius: 8,
-                    border: BORDER2,
-                    background: "rgba(255,255,255,0.05)",
-                    color: TEXT_SEC,
-                    textDecoration: "none",
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: 5,
-                  }}
-                >
-                  📄 公開情報
-                </Link>
-              ) : null}
+              <Link
+                href={`/stocks/${item.ticker}/filings`}
+                style={{
+                  fontSize: 13,
+                  fontWeight: 500,
+                  padding: "6px 14px",
+                  borderRadius: 8,
+                  border: BORDER2,
+                  background: "rgba(255,255,255,0.05)",
+                  color: TEXT_SEC,
+                  textDecoration: "none",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 5,
+                }}
+              >
+                📄 公開情報
+              </Link>
             </div>
           </div>
 
