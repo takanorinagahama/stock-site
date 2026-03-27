@@ -202,7 +202,7 @@ export async function getUsTickers(): Promise<string[]> {
     .from("stocks")
     .select("ticker")
     .eq("is_active", true)
-    .eq("country", "US");
+    .ilike("country", "%US%");
 
   if (error) {
     console.error("[getUsTickers] error:", error.message);
