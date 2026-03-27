@@ -83,7 +83,7 @@ export default async function FilingsPage({ params }: PageProps) {
     }),
   ]);
 
-  const isUsStock = stock?.country === "US" || (!stock?.country);
+  const isUsStock = !stock?.country || stock.country.includes("US");
   const companyName = stock?.name ?? edgarFilings[0]?.company_name ?? upperTicker;
 
   // 主要書類かどうか（DOC_META の secondary: true でない書類）
