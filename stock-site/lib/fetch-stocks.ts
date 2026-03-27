@@ -15,6 +15,7 @@ export type StockApiItem = {
   name: string;
   country: string | null;
   market: string | null;
+  isActive?: boolean;
   aiCategory: string | null;
   categoryJa?: string | null;
   companyDescription: string | null;
