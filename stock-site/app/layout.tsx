@@ -112,7 +112,6 @@ export default function RootLayout({
                   fontSize: 11,
                   lineHeight: 1.7,
                   color: "#94a3b8",
-                  maxWidth: 280,
                   margin: 0,
                 }}
               >
