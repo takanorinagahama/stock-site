@@ -201,8 +201,7 @@ export async function getUsTickers(): Promise<string[]> {
   const { data, error } = await sb
     .from("stocks")
     .select("ticker")
-    .eq("is_active", true)
-    .ilike("country", "%US%");
+    .eq("is_active", true);
 
   if (error) {
     console.error("[getUsTickers] error:", error.message);

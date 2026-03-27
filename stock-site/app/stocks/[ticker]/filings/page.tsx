@@ -83,7 +83,7 @@ export default async function FilingsPage({ params }: PageProps) {
     }),
   ]);
 
-  const isUsStock = !stock?.country || stock.country.includes("US");
+  const isUsStock = true; // 全銘柄EDGAR対象（NYSE/NASDAQ上場の外国株も20-F等を提出）
   const companyName = stock?.name ?? edgarFilings[0]?.company_name ?? upperTicker;
 
   // 主要書類かどうか（DOC_META の secondary: true でない書類）

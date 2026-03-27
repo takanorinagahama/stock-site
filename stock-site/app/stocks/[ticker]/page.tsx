@@ -341,8 +341,8 @@ export default async function StockDetailPage({ params }: DetailPageProps) {
                   📊 IRページ
                 </a>
               ) : null}
-              {/* 公開情報リンク（US上場株 = country に "US" を含む、または未設定） */}
-              {!item.country || item.country.includes("US") ? (
+              {/* 公開情報リンク（全銘柄表示） */}
+              {(
                 <Link
                   href={`/stocks/${item.ticker}/filings`}
                   style={{
