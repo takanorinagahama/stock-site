@@ -137,6 +137,7 @@ export default async function ThemeDetailPage({ params }: ThemePageProps) {
         minHeight: "100vh",
         color: TEXT_PRI,
         fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+        overflowX: "hidden",
       }}
     >
       <SiteHeader />
@@ -314,7 +315,7 @@ export default async function ThemeDetailPage({ params }: ThemePageProps) {
             >
               {stocks.length > 0 ? (
                 <div style={{ overflowX: "auto" }}>
-                  <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, minWidth: 480 }}>
+                  <table className="theme-stocks-table" style={{ width: "100%", borderCollapse: "collapse", fontSize: 13, minWidth: 400 }}>
                     <thead>
                       <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
                         {["会社名", "ticker", "区分 / 役割", "一言要約"].map((h) => (
@@ -381,6 +382,7 @@ export default async function ThemeDetailPage({ params }: ThemePageProps) {
                             {item.stock.categoryJa ?? item.stock.aiCategory ?? "関連企業"}
                           </td>
                           <td
+                            className="td-summary-cell"
                             style={{
                               padding: "12px 12px",
                               color: TEXT_SEC,
@@ -642,6 +644,16 @@ export default async function ThemeDetailPage({ params }: ThemePageProps) {
         @media (min-width: 900px) {
           .theme-detail-grid {
             grid-template-columns: 2fr 1fr !important;
+          }
+        }
+        @media (max-width: 480px) {
+          .theme-stocks-table td,
+          .theme-stocks-table th {
+            padding: 8px 8px !important;
+            font-size: 12px !important;
+          }
+          .theme-stocks-table .td-summary-cell {
+            display: none;
           }
         }
         .td-related-link:hover {
