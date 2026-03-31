@@ -137,7 +137,6 @@ export default async function ThemeDetailPage({ params }: ThemePageProps) {
         minHeight: "100vh",
         color: TEXT_PRI,
         fontFamily: 'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
-        overflowX: "hidden",
       }}
     >
       <SiteHeader />
@@ -291,7 +290,7 @@ export default async function ThemeDetailPage({ params }: ThemePageProps) {
           className="theme-detail-grid"
         >
           {/* Left column */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 20, minWidth: 0 }}>
             {/* Definition */}
             <SectionCard
               icon="📖"
@@ -435,7 +434,7 @@ export default async function ThemeDetailPage({ params }: ThemePageProps) {
           </div>
 
           {/* Right column */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 20, minWidth: 0 }}>
             {/* Stock positioning */}
             <div
               style={{
