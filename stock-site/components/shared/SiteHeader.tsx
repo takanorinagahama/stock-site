@@ -26,7 +26,7 @@ export function SiteHeader() {
       >
         <Link
           href="/"
-          style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none" }}
+          style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none", flexShrink: 0 }}
         >
           <div
             style={{
@@ -50,12 +50,13 @@ export function SiteHeader() {
               fontWeight: 600,
               color: "#f1f5f9",
               letterSpacing: "-0.01em",
+              whiteSpace: "nowrap",
             }}
           >
             AI Stock Data
           </span>
         </Link>
-        <nav style={{ display: "flex", alignItems: "center", gap: 4 }}>
+        <nav className="site-header-nav" style={{ display: "flex", alignItems: "center", gap: 4 }}>
           {[
             { label: "テーマ一覧", href: "/themes" },
             { label: "銘柄一覧", href: "/stocks" },
@@ -71,12 +72,21 @@ export function SiteHeader() {
                 fontWeight: 500,
                 color: "#cbd5e1",
                 textDecoration: "none",
+                whiteSpace: "nowrap",
               }}
             >
               {item.label}
             </Link>
           ))}
         </nav>
+        <style>{`
+          @media (max-width: 480px) {
+            .site-header-nav a {
+              padding: 6px 7px !important;
+              font-size: 12px !important;
+            }
+          }
+        `}</style>
       </div>
     </header>
   );
