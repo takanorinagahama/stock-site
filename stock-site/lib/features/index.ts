@@ -4,6 +4,8 @@ import { article as howToBuy } from "../../content/features/how-to-buy-us-ai-sto
 import { article as aiEarningsProof } from "../../content/features/ai-earnings-proof";
 import { article as aiDataCenter } from "../../content/features/ai-data-center-stocks";
 import { article as bestBrokerages } from "../../content/features/best-brokerages-for-us-ai-stocks";
+import { article as japanAiCompanies } from "../../content/features/japan-ai-companies";
+import { article as openaiAnthropicDifferences } from "../../content/features/openai-anthropic-google-deepmind-differences";
 
 const ALL_FEATURES: FeatureArticle[] = [
   aiBeneficiaries,
@@ -11,6 +13,8 @@ const ALL_FEATURES: FeatureArticle[] = [
   aiEarningsProof,
   aiDataCenter,
   bestBrokerages,
+  japanAiCompanies,
+  openaiAnthropicDifferences,
 ];
 
 export function getAllFeatures(): FeatureArticle[] {
