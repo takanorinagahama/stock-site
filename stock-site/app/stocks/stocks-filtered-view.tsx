@@ -119,6 +119,7 @@ function DepBadge({ label, level }: { label: string | null; level: number | null
         borderRadius: 5,
         background: c.bg,
         color: c.text,
+        whiteSpace: "nowrap",
       }}
     >
       {dep}
