@@ -14,7 +14,7 @@ export const article: FeatureArticle = {
     "ai-software-platform-stocks",
     "energy-power-infrastructure-stocks",
   ],
-  relatedStocks: ["MSFT", "EQIX", "VRT", "SAP"],
+  relatedStocks: ["MSFT", "EQIX", "VRT"],
   sections: [
     {
       heading: "AIブームの恩恵は、半導体だけでは終わらない",

@@ -9,7 +9,7 @@ export const article: FeatureArticle = {
   updatedAt: "2026-03-23",
   featured: true,
   relatedThemes: ["ai-software-platform-stocks", "ai-infrastructure-stocks"],
-  relatedStocks: ["MSFT", "DELL", "SAP"],
+  relatedStocks: ["MSFT", "DELL"],
   sections: [
     {
       heading: "AI関連と、AIで稼いでいることは別の話",
