@@ -9,7 +9,7 @@ export const article: FeatureArticle = {
   updatedAt: "2026-04-03",
   featured: false,
   relatedThemes: ["ai-related-stocks", "ai-semiconductor-stocks"],
-  relatedStocks: ["NVDA", "GOOGL", "META", "NFLX", "AMZN", "LLY", "AZN"],
+  relatedStocks: ["NVDA", "GOOGL", "META"],
   sections: [
     {
       heading: "LLMと生成AIだけでは、AIテーマを捉えきれなくなっている",
