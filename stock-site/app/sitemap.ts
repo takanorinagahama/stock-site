@@ -1,11 +1,25 @@
 import type { MetadataRoute } from "next";
+import { createClient } from "@supabase/supabase-js";
 import { getAllThemeSlugs } from "../lib/themes";
 import { getAllFeatureSlugs } from "../lib/features";
 
 const siteUrl = "https://ai-stock-data.com";
 
-export default function sitemap(): MetadataRoute.Sitemap {
+async function getActiveTickerSlugs(): Promise<string[]> {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  if (!url || !key) return [];
+  const supabase = createClient(url, key);
+  const { data } = await supabase
+    .from("stocks")
+    .select("ticker")
+    .eq("is_active", true);
+  return (data ?? []).map((r: { ticker: string }) => r.ticker);
+}
+
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const now = new Date();
+  const tickers = await getActiveTickerSlugs();
 
   return [
     {
@@ -67,6 +81,12 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: now,
       changeFrequency: "weekly" as const,
       priority: 0.7,
+    })),
+    ...tickers.map((ticker) => ({
+      url: `${siteUrl}/stocks/${ticker}`,
+      lastModified: now,
+      changeFrequency: "weekly" as const,
+      priority: 0.6,
     })),
   ];
 }

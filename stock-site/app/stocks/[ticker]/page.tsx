@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { notFound } from "next/navigation";
+import type { Metadata } from "next";
 import { SiteHeader } from "../../../components/shared/SiteHeader";
 import { fetchStockByTicker } from "../../../lib/fetch-stocks";
 import { THEMES } from "../../../lib/themes";
@@ -19,6 +21,22 @@ const INDIGO_TEXT = "#a5b4fc";
 const MAX_PARTS = { ai: 100, growth: 100, dependency: 100, tier: 100 };
 
 type DetailPageProps = { params: Promise<{ ticker: string }> };
+
+export async function generateMetadata({ params }: DetailPageProps): Promise<Metadata> {
+  const { ticker } = await params;
+  const item = await fetchStockByTicker(ticker);
+  if (!item) return {};
+  const title = `${item.ticker} (${item.name}) のAIスコア・事業概要 | AI Stock Data`;
+  const description =
+    item.aiSummary ??
+    `${item.name}（${item.ticker}）のAI関連スコアと事業概要。AI期待度・売上・成長力・依存度を整理した参考情報です。`;
+  return {
+    title,
+    description,
+    openGraph: { title, description },
+    twitter: { card: "summary", title, description },
+  };
+}
 
 function asText(value: number | string | null | undefined, fallback = "データ不足"): string {
   return value == null || value === "" ? fallback : String(value);
@@ -119,20 +137,7 @@ export default async function StockDetailPage({ params }: DetailPageProps) {
   const { ticker } = await params;
   const item = await fetchStockByTicker(ticker);
 
-  if (!item) {
-    return (
-      <div style={{ background: BG, minHeight: "100vh", color: TEXT_PRI }}>
-        <SiteHeader />
-        <div style={{ maxWidth: 920, margin: "0 auto", padding: "56px 20px" }}>
-          <h1 style={{ fontSize: 28, marginBottom: 8 }}>{ticker.toUpperCase()}</h1>
-          <p style={{ color: TEXT_SEC }}>該当銘柄のデータが見つかりませんでした。</p>
-          <Link href="/stocks" style={{ color: INDIGO_TEXT, textDecoration: "none", fontSize: 14, marginTop: 16, display: "inline-block" }}>
-            ← 銘柄一覧に戻る
-          </Link>
-        </div>
-      </div>
-    );
-  }
+  if (!item) notFound();
 
   /* Related themes */
   const relatedThemes = THEMES.filter((t) =>
