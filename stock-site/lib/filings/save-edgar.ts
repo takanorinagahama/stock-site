@@ -73,12 +73,20 @@ export async function saveEdgarFilingsForTickers(
   tickers: string[],
   count = DEFAULT_COUNT
 ): Promise<SaveResult[]> {
+  const CONCURRENCY = 10; // SEC レートリミット: 10リクエスト/秒
   const results: SaveResult[] = [];
-  for (const ticker of tickers) {
-    const r = await saveEdgarFilingsForTicker(ticker, count);
-    results.push(r);
-    // SEC API へのリクエストを詰めすぎないよう 300ms 待機
-    await new Promise((res) => setTimeout(res, 300));
+
+  for (let i = 0; i < tickers.length; i += CONCURRENCY) {
+    const chunk = tickers.slice(i, i + CONCURRENCY);
+    const chunkResults = await Promise.all(
+      chunk.map((ticker) => saveEdgarFilingsForTicker(ticker, count))
+    );
+    results.push(...chunkResults);
+    // チャンク間で1秒待機（SECレートリミット対策）
+    if (i + CONCURRENCY < tickers.length) {
+      await new Promise((res) => setTimeout(res, 1000));
+    }
   }
+
   return results;
 }
