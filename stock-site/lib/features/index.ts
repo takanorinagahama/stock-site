@@ -21,12 +21,15 @@ const ALL_FEATURES: FeatureArticle[] = [
   spaceSolarPower,
 ];
 
+const byDateDesc = (a: FeatureArticle, b: FeatureArticle) =>
+  b.updatedAt.localeCompare(a.updatedAt);
+
 export function getAllFeatures(): FeatureArticle[] {
-  return ALL_FEATURES;
+  return [...ALL_FEATURES].sort(byDateDesc);
 }
 
 export function getFeaturedFeatures(): FeatureArticle[] {
-  return ALL_FEATURES.filter((a) => a.featured);
+  return ALL_FEATURES.filter((a) => a.featured).sort(byDateDesc);
 }
 
 export function getFeatureBySlug(slug: string): FeatureArticle | undefined {
