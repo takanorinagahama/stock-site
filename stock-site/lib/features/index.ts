@@ -8,6 +8,7 @@ import { article as japanAiCompanies } from "../../content/features/japan-ai-com
 import { article as openaiAnthropicDifferences } from "../../content/features/openai-anthropic-google-deepmind-differences";
 import { article as aiModelsBeyondLlm } from "../../content/features/ai-models-beyond-llm";
 import { article as spaceSolarPower } from "../../content/features/space-based-solar-power-ai-energy";
+import { article as agiOrganization } from "../../content/features/agi-organization-startup";
 
 const ALL_FEATURES: FeatureArticle[] = [
   aiBeneficiaries,
@@ -19,6 +20,7 @@ const ALL_FEATURES: FeatureArticle[] = [
   openaiAnthropicDifferences,
   aiModelsBeyondLlm,
   spaceSolarPower,
+  agiOrganization,
 ];
 
 const byDateDesc = (a: FeatureArticle, b: FeatureArticle) =>
