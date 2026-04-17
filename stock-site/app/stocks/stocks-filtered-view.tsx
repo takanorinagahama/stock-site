@@ -43,9 +43,8 @@ function formatAiRevenue(value: number | null): string {
 
 function formatGrowthDiff(value: number | null): string {
   if (value == null) return "—";
-  const t = Math.trunc(value * 10) / 10;
-  const str = Number.isInteger(t) ? String(t) : t.toFixed(1);
-  return value > 0 ? `+${str}` : str;
+  const rounded = Math.round(value);
+  return value > 0 ? `+${rounded}` : String(rounded);
 }
 
 function getAiCategoryLabel(stock: StockApiItem): string {

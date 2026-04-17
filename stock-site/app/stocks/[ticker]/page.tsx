@@ -47,6 +47,18 @@ function formatAiRevenue(value: number | null | undefined): string {
   return value.toLocaleString("en-US");
 }
 
+const SITE_URL = "https://ai-stock-data.com";
+
+function buildShareUrls(ticker: string, name: string) {
+  const pageUrl = `${SITE_URL}/stocks/${ticker}`;
+  const text = encodeURIComponent(`${ticker}（${name}）のAI期待度スコアと事業概要`);
+  const encodedUrl = encodeURIComponent(pageUrl);
+  return {
+    x: `https://twitter.com/intent/tweet?text=${text}&url=${encodedUrl}`,
+    facebook: `https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`,
+  };
+}
+
 function ScoreBadge({ score }: { score: number | null }) {
   if (score == null) return <span style={{ fontSize: 32, fontWeight: 700, color: TEXT_TER }}>—</span>;
   const color = score >= 80 ? "#6ee7b7" : score >= 65 ? "#a5b4fc" : "#94a3b8";
@@ -158,6 +170,8 @@ export default async function StockDetailPage({ params }: DetailPageProps) {
   const partsSum = item.scoreParts
     ? item.scoreParts.ai + item.scoreParts.growth + item.scoreParts.dependency + (item.scoreParts.tier ?? 0)
     : null;
+
+  const shareUrls = buildShareUrls(item.ticker, item.name);
 
   /* 非アクティブバナー */
   const inactiveBanner =
@@ -365,6 +379,46 @@ export default async function StockDetailPage({ params }: DetailPageProps) {
               >
                 📄 公開情報
               </Link>
+              <a
+                href={shareUrls.x}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  fontSize: 12,
+                  fontWeight: 500,
+                  padding: "6px 12px",
+                  borderRadius: 8,
+                  border: "1px solid rgba(255,255,255,0.07)",
+                  background: "rgba(255,255,255,0.03)",
+                  color: TEXT_TER,
+                  textDecoration: "none",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 5,
+                }}
+              >
+                𝕏 で共有
+              </a>
+              <a
+                href={shareUrls.facebook}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  fontSize: 12,
+                  fontWeight: 500,
+                  padding: "6px 12px",
+                  borderRadius: 8,
+                  border: "1px solid rgba(255,255,255,0.07)",
+                  background: "rgba(255,255,255,0.03)",
+                  color: TEXT_TER,
+                  textDecoration: "none",
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 5,
+                }}
+              >
+                f Facebook で共有
+              </a>
             </div>
           </div>
 
@@ -516,19 +570,6 @@ export default async function StockDetailPage({ params }: DetailPageProps) {
 
           {/* ── Right column ── */}
           <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-            {/* Key metrics */}
-            <div style={{ background: CARD_BG, border: BORDER, borderRadius: 14, padding: "20px 22px" }}>
-              <p style={{ fontSize: 11, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.07em", color: TEXT_TER, marginBottom: 14 }}>
-                主要指標
-              </p>
-              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                <MetricRow label="AI期待度スコア" value={item.score != null ? `${item.score}` : "データ不足"} sub="総合目安スコア" accent />
-                <MetricRow label="AI売上（推定）"  value={formatAiRevenue(item.aiRevMid)} sub="百万ドル単位" />
-                <MetricRow label="AI成長スコア"    value={asText(item.scoreParts?.growth)} sub="成長力（0-100）" rawValue={item.scoreParts?.growth ?? null} />
-                <MetricRow label="確度"             value={item.tier != null ? item.tier : "データ不足"} sub="データ信頼度（A/B/C）" />
-              </div>
-            </div>
-
             {/* Page guide */}
             <div style={{ background: CARD_BG, border: BORDER, borderRadius: 14, padding: "20px 22px" }}>
               <h3 style={{ fontSize: 13, fontWeight: 600, color: TEXT_SEC, marginBottom: 14 }}>
@@ -620,47 +661,3 @@ export default async function StockDetailPage({ params }: DetailPageProps) {
   );
 }
 
-function MetricRow({
-  label,
-  value,
-  sub,
-  accent,
-  rawValue,
-}: {
-  label: string;
-  value: string;
-  sub?: string;
-  accent?: boolean;
-  rawValue?: number | null;
-}) {
-  const valueColor = accent ? "#a5b4fc" : TEXT_PRI;
-
-  return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "flex-start",
-        justifyContent: "space-between",
-        gap: 12,
-        padding: "10px 0",
-        borderBottom: "1px solid rgba(255,255,255,0.05)",
-      }}
-    >
-      <div>
-        <p style={{ fontSize: 12, color: TEXT_TER, marginBottom: 2 }}>{label}</p>
-        {sub && <p style={{ fontSize: 10, color: "rgba(148,163,184,0.7)" }}>{sub}</p>}
-      </div>
-      <span
-        style={{
-          fontSize: 16,
-          fontWeight: 700,
-          color: valueColor,
-          letterSpacing: "-0.01em",
-          whiteSpace: "nowrap",
-        }}
-      >
-        {value}
-      </span>
-    </div>
-  );
-}
