@@ -39,6 +39,11 @@ interface RankingListProps {
 export function RankingList({ stocks }: RankingListProps) {
   return (
     <section>
+      <style>{`
+        .rl-row-link { transition: background 0.12s; }
+        .rl-row-link:hover { background: rgba(255,255,255,0.025) !important; }
+      `}</style>
+
       {/* section header */}
       <div
         style={{
@@ -78,7 +83,7 @@ export function RankingList({ stocks }: RankingListProps) {
         </Link>
       </div>
 
-      {/* card */}
+      {/* card list */}
       <div
         style={{
           background: "#141922",
@@ -87,75 +92,138 @@ export function RankingList({ stocks }: RankingListProps) {
           overflow: "hidden",
         }}
       >
-        {stocks.map((stock, i) => (
-          <Link
-            key={stock.ticker}
-            href={`/stocks/${stock.ticker}`}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 16,
-              padding: "14px 20px",
-              borderTop: i === 0 ? "none" : "1px solid rgba(255,255,255,0.05)",
-              textDecoration: "none",
-            }}
-          >
-            {/* rank */}
-            <span
+        {stocks.map((stock, i) => {
+          const hasDesc = stock.companyDescription || stock.aiSummary;
+          return (
+            <Link
+              key={stock.ticker}
+              href={`/stocks/${stock.ticker}`}
+              className="rl-row-link"
               style={{
-                fontSize: 13,
-                fontWeight: 600,
-                color: "#94a3b8",
-                width: 20,
-                textAlign: "center",
-                flexShrink: 0,
+                display: "block",
+                padding: "14px 20px",
+                borderTop: i === 0 ? "none" : "1px solid rgba(255,255,255,0.05)",
+                textDecoration: "none",
               }}
             >
-              {i + 1}
-            </span>
-
-            {/* info */}
-            <div style={{ flex: 1, minWidth: 0 }}>
+              {/* ── Header row: rank + ticker/name + score ── */}
               <div
                 style={{
                   display: "flex",
                   alignItems: "center",
-                  gap: 8,
-                  flexWrap: "wrap",
+                  gap: 16,
+                  marginBottom: hasDesc ? 10 : 0,
                 }}
               >
+                {/* rank */}
                 <span
                   style={{
-                    fontSize: 14,
+                    fontSize: 13,
                     fontWeight: 600,
-                    color: "#e2e8f0",
+                    color: "#94a3b8",
+                    width: 20,
+                    textAlign: "center",
+                    flexShrink: 0,
                   }}
                 >
-                  {stock.ticker}
+                  {i + 1}
                 </span>
-                <span style={{ fontSize: 12, color: "#94a3b8" }}>
-                  {stock.name}
-                </span>
-              </div>
-              <span style={{ fontSize: 11, color: "#94a3b8" }}>
-                {stock.categoryJa ?? stock.aiCategory ?? "—"}
-              </span>
-            </div>
 
-            {/* score + chevron */}
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 12,
-                flexShrink: 0,
-              }}
-            >
-              {stock.score !== null && <ScoreBadge score={stock.score} />}
-              <span style={{ fontSize: 14, color: "#94a3b8" }}>›</span>
-            </div>
-          </Link>
-        ))}
+                {/* ticker + name + category */}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 8,
+                      flexWrap: "wrap",
+                    }}
+                  >
+                    <span
+                      style={{ fontSize: 14, fontWeight: 600, color: "#e2e8f0" }}
+                    >
+                      {stock.ticker}
+                    </span>
+                    <span style={{ fontSize: 13, color: "#94a3b8" }}>
+                      {stock.name}
+                    </span>
+                  </div>
+                  <span style={{ fontSize: 12, color: "#64748b", marginTop: 1, display: "block" }}>
+                    {stock.categoryJa ?? stock.aiCategory ?? "—"}
+                  </span>
+                </div>
+
+                {/* score + chevron */}
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 8,
+                    flexShrink: 0,
+                  }}
+                >
+                  {stock.score !== null && <ScoreBadge score={stock.score} />}
+                  <span style={{ fontSize: 14, color: "#94a3b8" }}>›</span>
+                </div>
+              </div>
+
+              {/* ── Description area ── */}
+              {hasDesc && (
+                <div
+                  style={{
+                    marginLeft: 36,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 7,
+                  }}
+                >
+                  {/* company description */}
+                  {stock.companyDescription && (
+                    <p
+                      style={{
+                        fontSize: 13,
+                        color: "#94a3b8",
+                        lineHeight: 1.7,
+                        margin: 0,
+                      }}
+                    >
+                      {stock.companyDescription}
+                    </p>
+                  )}
+
+                  {/* AI summary */}
+                  {stock.aiSummary && (
+                    <div>
+                      <span
+                        style={{
+                          fontSize: 11,
+                          fontWeight: 600,
+                          color: "#818cf8",
+                          letterSpacing: "0.06em",
+                          textTransform: "uppercase",
+                          display: "block",
+                          marginBottom: 3,
+                        }}
+                      >
+                        AIとの関わり
+                      </span>
+                      <p
+                        style={{
+                          fontSize: 13,
+                          color: "#cbd5e1",
+                          lineHeight: 1.7,
+                          margin: 0,
+                        }}
+                      >
+                        {stock.aiSummary}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </Link>
+          );
+        })}
       </div>
     </section>
   );

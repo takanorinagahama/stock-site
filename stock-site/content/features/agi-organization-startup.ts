@@ -7,7 +7,7 @@ export const article: FeatureArticle = {
     "AGIが実用化されたとき、会社組織はどう変わるのか。10人規模のスタートアップを例に、人間とAGIが協働する具体的な業務フローと競争優位の変化を考察する。",
   category: "テーマ深掘り",
   updatedAt: "2026-04-16",
-  featured: false,
+  featured: true,
   relatedThemes: ["ai-related-stocks"],
   relatedStocks: [],
   sections: [

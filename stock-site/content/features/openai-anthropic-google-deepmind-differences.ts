@@ -8,7 +8,7 @@ export const article: FeatureArticle = {
     "ChatGPT、Claude、Geminiは有名でも、その裏にいる会社の違いは意外とわかりにくいものです。OpenAI、Anthropic、Google DeepMind、Cohereを例に、何を重視している会社なのかを初心者向けに整理します。",
   category: "テーマ深掘り",
   updatedAt: "2026-04-02",
-  featured: false,
+  featured: true,
   relatedThemes: ["ai-related-stocks"],
   relatedStocks: ["MSFT", "GOOGL"],
   sections: [

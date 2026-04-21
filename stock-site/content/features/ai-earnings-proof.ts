@@ -7,7 +7,7 @@ export const article: FeatureArticle = {
     "「AI関連」を掲げる会社は多いが、実際にAIが業績へ効いているかどうかは決算を見るまで分からない。売上成長への寄与、受注・受注残、受注構成という3つの観点で、AIの実績をどう見抜くかを一次ソースだけで整理する。",
   category: "決算ベース",
   updatedAt: "2026-03-23",
-  featured: true,
+  featured: false,
   relatedThemes: ["ai-software-platform-stocks", "ai-infrastructure-stocks"],
   relatedStocks: ["MSFT", "DELL"],
   sections: [

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import type { StockApiItem } from "../../lib/fetch-stocks";
 import { THEMES } from "../../lib/themes";
 import { normalizeCategoryLabel } from "../../lib/categories";
@@ -112,7 +112,7 @@ function DepBadge({ label, level }: { label: string | null; level: number | null
   return (
     <span
       style={{
-        fontSize: 11,
+        fontSize: 12,
         fontWeight: 600,
         padding: "2px 8px",
         borderRadius: 5,
@@ -123,6 +123,67 @@ function DepBadge({ label, level }: { label: string | null; level: number | null
     >
       {dep}
     </span>
+  );
+}
+
+/** 説明テキストのラベル付きブロック（上位10件用） */
+function DescriptionRow({ companyDescription, aiSummary }: { companyDescription: string | null; aiSummary: string | null }) {
+  if (!companyDescription && !aiSummary) return null;
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: 6,
+        paddingBottom: 11,
+        paddingLeft: 14,
+        paddingRight: 14,
+      }}
+    >
+      {companyDescription && (
+        <p
+         
+          style={{
+            fontSize: 13,
+            color: TEXT_TER,
+            lineHeight: 1.7,
+            margin: 0,
+            wordBreak: "break-word",
+          }}
+        >
+          {companyDescription}
+        </p>
+      )}
+      {aiSummary && (
+        <div>
+          <span
+            style={{
+              fontSize: 11,
+              fontWeight: 600,
+              color: "#818cf8",
+              letterSpacing: "0.06em",
+              textTransform: "uppercase",
+              display: "block",
+              marginBottom: 3,
+            }}
+          >
+            AIとの関わり
+          </span>
+          <p
+           
+            style={{
+              fontSize: 13,
+              color: TEXT_SEC,
+              lineHeight: 1.7,
+              margin: 0,
+              wordBreak: "break-word",
+            }}
+          >
+            {aiSummary}
+          </p>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -212,7 +273,6 @@ export default function StocksFilteredView({ items }: Props) {
           marginBottom: 20,
         }}
       >
-        {/* Mobile: cards */}
         <div>
           <style>{`
             @media (min-width: 768px) { .stock-mobile-cards { display: none !important; } }
@@ -220,40 +280,97 @@ export default function StocksFilteredView({ items }: Props) {
             .sf-ticker-link:hover { opacity: 0.75; }
             .sf-name-link:hover { color: #f1f5f9 !important; }
           `}</style>
+
+          {/* ── Mobile: cards ── */}
           <div className="stock-mobile-cards">
-            {filtered.map((s, i) => (
-              <Link
-                key={s.ticker}
-                href={`/stocks/${s.ticker}`}
-                style={{
-                  display: "block",
-                  textDecoration: "none",
-                  borderBottom: i < filtered.length - 1 ? "1px solid rgba(255,255,255,0.05)" : "none",
-                  padding: "14px 16px",
-                  color: "inherit",
-                }}
-              >
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                    <span style={{ fontSize: 12, color: TEXT_TER, width: 20, textAlign: "center" }}>{i + 1}</span>
-                    <div>
-                      <span style={{ fontSize: 14, fontWeight: 700, color: TEXT_PRI }}>{s.ticker}</span>
-                      <p style={{ fontSize: 11, color: TEXT_TER }}>{s.name}</p>
+            {filtered.map((s, i) => {
+              const isTopTen = i < 10;
+              const hasDesc = isTopTen && (s.companyDescription || s.aiSummary);
+              return (
+                <Link
+                  key={s.ticker}
+                  href={`/stocks/${s.ticker}`}
+                  style={{
+                    display: "block",
+                    textDecoration: "none",
+                    borderBottom: i < filtered.length - 1 ? "1px solid rgba(255,255,255,0.05)" : "none",
+                    padding: "14px 16px",
+                    color: "inherit",
+                  }}
+                >
+                  {/* ticker + score row */}
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                      <span style={{ fontSize: 13, color: TEXT_TER, width: 20, textAlign: "center" }}>{i + 1}</span>
+                      <div>
+                        <span style={{ fontSize: 14, fontWeight: 700, color: TEXT_PRI }}>{s.ticker}</span>
+                        <p style={{ fontSize: 13, color: TEXT_TER }}>{s.name}</p>
+                      </div>
                     </div>
+                    <ScoreBadge score={s.score} />
                   </div>
-                  <ScoreBadge score={s.score} />
-                </div>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: "4px 14px", marginLeft: 30 }}>
-                  <span style={{ fontSize: 11, color: TEXT_TER }}>AI売上: <span style={{ color: TEXT_SEC }}>{formatAiRevenue(s.aiRevMid)}</span></span>
-                  <span style={{ fontSize: 11, color: TEXT_TER }}>成長: <span style={{ color: TEXT_SEC }}>{formatGrowthDiff(s.growthDiff)}</span></span>
-                </div>
-              </Link>
-            ))}
+
+                  {/* stats row */}
+                  <div style={{ display: "flex", flexWrap: "wrap", gap: "4px 14px", marginLeft: 30, marginBottom: hasDesc ? 8 : 0 }}>
+                    <span style={{ fontSize: 12, color: TEXT_TER }}>AI売上: <span style={{ color: TEXT_SEC }}>{formatAiRevenue(s.aiRevMid)}</span></span>
+                    <span style={{ fontSize: 12, color: TEXT_TER }}>成長: <span style={{ color: TEXT_SEC }}>{formatGrowthDiff(s.growthDiff)}</span></span>
+                  </div>
+
+                  {/* description area — top 10 only */}
+                  {hasDesc && (
+                    <div style={{ marginLeft: 30, display: "flex", flexDirection: "column", gap: 6 }}>
+                      {s.companyDescription && (
+                        <p
+                         
+                          style={{ fontSize: 13, color: TEXT_TER, lineHeight: 1.7, margin: 0 }}
+                        >
+                          {s.companyDescription}
+                        </p>
+                      )}
+                      {s.aiSummary && (
+                        <div>
+                          <span
+                            style={{
+                              fontSize: 11,
+                              fontWeight: 600,
+                              color: "#818cf8",
+                              letterSpacing: "0.06em",
+                              textTransform: "uppercase",
+                              display: "block",
+                              marginBottom: 2,
+                            }}
+                          >
+                            AIとの関わり
+                          </span>
+                          <p
+                           
+                            style={{ fontSize: 13, color: TEXT_SEC, lineHeight: 1.7, margin: 0 }}
+                          >
+                            {s.aiSummary}
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </Link>
+              );
+            })}
           </div>
 
-          {/* Desktop: table */}
+          {/* ── Desktop: table ── */}
           <div className="stock-desktop-table" style={{ overflowX: "auto" }}>
-            <table style={{ width: "100%", borderCollapse: "collapse", minWidth: 820 }}>
+            <table style={{ width: "100%", borderCollapse: "collapse", tableLayout: "fixed", minWidth: 1020 }}>
+              <colgroup>
+                <col style={{ width: 40 }} />
+                <col style={{ width: 82 }} />
+                <col />
+                <col style={{ width: 148 }} />
+                <col style={{ width: 148 }} />
+                <col style={{ width: 110 }} />
+                <col style={{ width: 80 }} />
+                <col style={{ width: 82 }} />
+                <col style={{ width: 60 }} />
+              </colgroup>
               <thead>
                 <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
                   {[
@@ -272,7 +389,7 @@ export default function StocksFilteredView({ items }: Props) {
                       style={{
                         textAlign: col.align,
                         padding: "11px 14px",
-                        fontSize: 11,
+                        fontSize: 12,
                         fontWeight: 600,
                         color: TEXT_TER,
                         whiteSpace: "nowrap",
@@ -296,90 +413,111 @@ export default function StocksFilteredView({ items }: Props) {
                       : growth < 0
                       ? "#fca5a5"
                       : TEXT_SEC;
+                  const isTopTen = i < 10;
+                  const hasDesc = isTopTen && (s.companyDescription || s.aiSummary);
+                  const rowBorder = !hasDesc && i < filtered.length - 1
+                    ? "1px solid rgba(255,255,255,0.04)"
+                    : "none";
+                  const descBorder = i < filtered.length - 1
+                    ? "1px solid rgba(255,255,255,0.04)"
+                    : "none";
+
                   return (
-                    <tr
-                      key={s.ticker}
-                      style={{
-                        borderBottom:
-                          i < filtered.length - 1 ? "1px solid rgba(255,255,255,0.04)" : "none",
-                      }}
-                    >
-                      <td style={{ padding: "11px 14px", textAlign: "center", color: TEXT_TER, fontSize: 12 }}>{i + 1}</td>
-                      <td style={{ padding: "11px 14px" }}>
-                        <Link
-                          href={`/stocks/${s.ticker}`}
-                          className="sf-ticker-link"
-                          style={{
-                            display: "inline-block",
-                            fontSize: 12,
-                            fontWeight: 700,
-                            padding: "2px 8px",
-                            borderRadius: 5,
-                            background: INDIGO_BG,
-                            color: INDIGO_TEXT,
-                            textDecoration: "none",
-                          }}
-                        >
-                          {s.ticker}
-                        </Link>
-                      </td>
-                      <td style={{ padding: "11px 14px" }}>
-                        <Link
-                          href={`/stocks/${s.ticker}`}
-                          className="sf-name-link"
-                          style={{
-                            fontSize: 13,
-                            fontWeight: 500,
-                            color: "#e2e8f0",
-                            whiteSpace: "nowrap",
-                            textDecoration: "none",
-                            display: "block",
-                          }}
-                        >
-                          {s.name}
-                        </Link>
-                      </td>
-                      <td style={{ padding: "11px 14px" }}>
-                        <p
-                          style={{
-                            fontSize: 12,
-                            color: TEXT_TER,
-                            maxWidth: 180,
-                            whiteSpace: "nowrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                          }}
-                        >
-                          {getAiCategoryLabel(s)}
-                        </p>
-                      </td>
-                      <td style={{ padding: "11px 14px" }}>
-                        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                          <ScoreBadge score={s.score} />
-                          <StarRating score={s.score} />
-                        </div>
-                      </td>
-                      <td style={{ padding: "11px 14px", textAlign: "right" }}>
-                        <span style={{ fontSize: 13, color: TEXT_SEC, fontVariantNumeric: "tabular-nums" }}>
-                          {s.aiRevMid != null ? formatAiRevenue(s.aiRevMid) : <span style={{ fontSize: 11, color: TEXT_TER, fontStyle: "italic" }}>データ不足</span>}
-                        </span>
-                      </td>
-                      <td style={{ padding: "11px 14px", textAlign: "right" }}>
-                        {growth != null ? (
-                          <span style={{ fontSize: 13, fontVariantNumeric: "tabular-nums", color: growthColor }}>
-                            {growthStr}
+                    <Fragment key={s.ticker}>
+                      {/* ── Main data row ── */}
+                      <tr style={{ borderBottom: rowBorder }}>
+                        <td style={{ padding: "11px 14px", textAlign: "center", color: TEXT_TER, fontSize: 13 }}>{i + 1}</td>
+                        <td style={{ padding: "11px 14px" }}>
+                          <Link
+                            href={`/stocks/${s.ticker}`}
+                            className="sf-ticker-link"
+                            style={{
+                              display: "inline-block",
+                              fontSize: 13,
+                              fontWeight: 700,
+                              padding: "2px 8px",
+                              borderRadius: 5,
+                              background: INDIGO_BG,
+                              color: INDIGO_TEXT,
+                              textDecoration: "none",
+                            }}
+                          >
+                            {s.ticker}
+                          </Link>
+                        </td>
+                        <td style={{ padding: "11px 14px" }}>
+                          <Link
+                            href={`/stocks/${s.ticker}`}
+                            className="sf-name-link"
+                            style={{
+                              fontSize: 13,
+                              fontWeight: 500,
+                              color: "#e2e8f0",
+                              whiteSpace: "nowrap",
+                              textDecoration: "none",
+                              display: "block",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                            }}
+                          >
+                            {s.name}
+                          </Link>
+                        </td>
+                        <td style={{ padding: "11px 14px" }}>
+                          <p
+                            style={{
+                              fontSize: 13,
+                              color: TEXT_TER,
+                              maxWidth: 180,
+                              whiteSpace: "nowrap",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                            }}
+                          >
+                            {getAiCategoryLabel(s)}
+                          </p>
+                        </td>
+                        <td style={{ padding: "11px 14px" }}>
+                          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                            <ScoreBadge score={s.score} />
+                            <StarRating score={s.score} />
+                          </div>
+                        </td>
+                        <td style={{ padding: "11px 14px", textAlign: "right" }}>
+                          <span style={{ fontSize: 13, color: TEXT_SEC, fontVariantNumeric: "tabular-nums" }}>
+                            {s.aiRevMid != null ? formatAiRevenue(s.aiRevMid) : <span style={{ fontSize: 11, color: TEXT_TER, fontStyle: "italic" }}>データ不足</span>}
                           </span>
-                        ) : (
-                          <span style={{ fontSize: 11, color: TEXT_TER, fontStyle: "italic" }}>データ不足</span>
-                        )}
-                      </td>
-                      <td style={{ padding: "11px 14px" }}>
-                        <DepBadge label={s.dependencyLabel} level={s.dependencyLevel} />
-                      </td>
-                      <td style={{ padding: "11px 14px", textAlign: "center" }}>
-                        <TierBadge tier={s.tier} />
-                      </td>
-                    </tr>
+                        </td>
+                        <td style={{ padding: "11px 14px", textAlign: "right" }}>
+                          {growth != null ? (
+                            <span style={{ fontSize: 13, fontVariantNumeric: "tabular-nums", color: growthColor }}>
+                              {growthStr}
+                            </span>
+                          ) : (
+                            <span style={{ fontSize: 11, color: TEXT_TER, fontStyle: "italic" }}>データ不足</span>
+                          )}
+                        </td>
+                        <td style={{ padding: "11px 14px" }}>
+                          <DepBadge label={s.dependencyLabel} level={s.dependencyLevel} />
+                        </td>
+                        <td style={{ padding: "11px 14px", textAlign: "center" }}>
+                          <TierBadge tier={s.tier} />
+                        </td>
+                      </tr>
+
+                      {/* ── Description sub-row — top 10 only ── */}
+                      {hasDesc && (
+                        <tr style={{ borderBottom: descBorder }}>
+                          <td />
+                          <td colSpan={8} style={{ paddingTop: 0 }}>
+                            <DescriptionRow
+                              companyDescription={s.companyDescription}
+                              aiSummary={s.aiSummary}
+                            />
+                          </td>
+                        </tr>
+                      )}
+                    </Fragment>
                   );
                 })}
               </tbody>

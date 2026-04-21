@@ -8,7 +8,7 @@ export const article: FeatureArticle = {
     "宇宙で太陽光を集め、マイクロ波で地上に送る「宇宙太陽光発電」。SF的な構想に見えるが、AI・データセンターによる電力需要の急増を背景に、JAXA・NASA・ESAなど各国機関や民間企業が実証を進めている。商用化への距離感と、周辺産業の見方を整理する。",
   category: "テーマ深掘り",
   updatedAt: "2026-04-09",
-  featured: false,
+  featured: true,
   relatedThemes: ["ai-infrastructure-stocks", "ai-energy-stocks-japan"],
   relatedStocks: [],
   sections: [

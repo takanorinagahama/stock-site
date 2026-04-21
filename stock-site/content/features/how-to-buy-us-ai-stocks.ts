@@ -7,7 +7,7 @@ export const article: FeatureArticle = {
     "日本から米国AI株を買うハードルは高くない。実際に差が出るのは、どの証券会社を使うか、NISAを使うか、円貨決済と外貨決済をどう使い分けるかという点だ。最初の1口座を選ぶ前に押さえたいポイントを整理する。",
   category: "買い方ガイド",
   updatedAt: "2026-03-23",
-  featured: true,
+  featured: false,
   relatedThemes: [
     "ai-semiconductor-stocks",
     "ai-infrastructure-stocks",

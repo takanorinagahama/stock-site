@@ -7,7 +7,7 @@ export const article: FeatureArticle = {
     "AI相場では半導体が主役に見えやすいが、実際に需要が広がっているのはデータセンター、電力・冷却、クラウド、既存ソフトウェアまで含む広いレイヤーだ。半導体の外側で何が伸びるのかを、公式開示ベースで整理する。",
   category: "テーマ深掘り",
   updatedAt: "2026-03-23",
-  featured: true,
+  featured: false,
   relatedThemes: [
     "ai-infrastructure-stocks",
     "data-center-stocks",
