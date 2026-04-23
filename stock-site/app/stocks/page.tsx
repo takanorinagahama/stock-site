@@ -30,8 +30,6 @@ export const metadata: Metadata = {
 };
 
 const BG = "#0c1118";
-const CARD_BG = "rgba(255,255,255,0.04)";
-const BORDER = "1px solid rgba(255,255,255,0.07)";
 const TEXT_PRI = "#f1f5f9";
 const TEXT_SEC = "#cbd5e1";
 const TEXT_TER = "#94a3b8";
@@ -52,21 +50,6 @@ export default async function StocksPage() {
   }
 
   const items = data.items;
-  const scoredItems = items.filter((s) => s.score != null);
-  const avgScore =
-    scoredItems.length > 0
-      ? Math.round(scoredItems.reduce((sum, s) => sum + (s.score ?? 0), 0) / scoredItems.length)
-      : 0;
-  const highDepCount = items.filter(
-    (s) => s.dependencyLabel === "高い" || (s.dependencyLevel ?? 0) >= 3
-  ).length;
-
-  const statCards = [
-    { label: "収録銘柄数", value: `${data.count}社` },
-    { label: "平均スコア", value: `${avgScore}` },
-    { label: "高依存度銘柄", value: `${highDepCount}社` },
-    { label: "基準月", value: data.asOfMonth ?? "—" },
-  ];
 
   return (
     <div
@@ -89,58 +72,27 @@ export default async function StocksPage() {
               letterSpacing: "-0.02em",
               color: TEXT_PRI,
               marginBottom: 10,
+              display: "flex",
+              alignItems: "baseline",
+              flexWrap: "wrap",
+              gap: "0 10px",
             }}
           >
             AI銘柄ランキング
+            <span
+              style={{
+                fontSize: "clamp(13px,2vw,16px)",
+                fontWeight: 500,
+                color: TEXT_TER,
+                letterSpacing: "0",
+              }}
+            >
+              全{items.length}社
+            </span>
           </h1>
           <p style={{ fontSize: 14, lineHeight: 1.8, color: TEXT_SEC, maxWidth: 560 }}>
             AI関連銘柄を、AI売上（推定）・成長差分・依存度・確度で比較して、何を確認すべきかを分かりやすく整理します。
           </p>
-        </div>
-
-        {/* Stat cards */}
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
-            gap: 12,
-            marginBottom: 28,
-          }}
-        >
-          {statCards.map((card) => (
-            <div
-              key={card.label}
-              style={{
-                background: CARD_BG,
-                border: BORDER,
-                borderRadius: 12,
-                padding: "16px 18px",
-              }}
-            >
-              <p
-                style={{
-                  fontSize: 11,
-                  fontWeight: 600,
-                  textTransform: "uppercase",
-                  letterSpacing: "0.06em",
-                  color: TEXT_TER,
-                  marginBottom: 6,
-                }}
-              >
-                {card.label}
-              </p>
-              <p
-                style={{
-                  fontSize: 22,
-                  fontWeight: 700,
-                  letterSpacing: "-0.02em",
-                  color: TEXT_PRI,
-                }}
-              >
-                {card.value}
-              </p>
-            </div>
-          ))}
         </div>
 
         {/* Interactive filter + table (client component) */}

@@ -234,6 +234,14 @@ export default function StocksFilteredView({ items }: Props) {
     return sorted.filter((s) => tickers.has(s.ticker.toUpperCase()));
   }, [activeTheme, sorted]);
 
+  // テーマチップは、現在の銘柄リストに1件以上マッチするものだけ表示
+  const availableThemes = useMemo(() => {
+    const dedupedTickers = new Set(deduped.map((s) => s.ticker.toUpperCase()));
+    return THEMES.filter((t) =>
+      t.featuredStocks.some((s) => dedupedTickers.has(s.ticker.toUpperCase()))
+    );
+  }, [deduped]);
+
   return (
     <div>
       {/* Theme filter chips */}
@@ -252,7 +260,7 @@ export default function StocksFilteredView({ items }: Props) {
         </p>
         <div style={{ display: "flex", flexWrap: "wrap", gap: 7 }}>
           <ThemeChip label="すべて" active={activeTheme === "all"} onClick={() => setActiveTheme("all")} />
-          {THEMES.map((t) => (
+          {availableThemes.map((t) => (
             <ThemeChip
               key={t.slug}
               label={t.title}
@@ -286,6 +294,7 @@ export default function StocksFilteredView({ items }: Props) {
             {filtered.map((s, i) => {
               const isTopTen = i < 10;
               const hasDesc = isTopTen && (s.companyDescription || s.aiSummary);
+              const cardBg = i % 2 === 1 ? "rgba(255,255,255,0.03)" : "transparent";
               return (
                 <Link
                   key={s.ticker}
@@ -296,6 +305,7 @@ export default function StocksFilteredView({ items }: Props) {
                     borderBottom: i < filtered.length - 1 ? "1px solid rgba(255,255,255,0.05)" : "none",
                     padding: "14px 16px",
                     color: "inherit",
+                    background: cardBg,
                   }}
                 >
                   {/* ticker + score row */}
@@ -415,6 +425,7 @@ export default function StocksFilteredView({ items }: Props) {
                       : TEXT_SEC;
                   const isTopTen = i < 10;
                   const hasDesc = isTopTen && (s.companyDescription || s.aiSummary);
+                  const rowBg = i % 2 === 1 ? "rgba(255,255,255,0.03)" : "transparent";
                   const rowBorder = !hasDesc && i < filtered.length - 1
                     ? "1px solid rgba(255,255,255,0.04)"
                     : "none";
@@ -425,7 +436,7 @@ export default function StocksFilteredView({ items }: Props) {
                   return (
                     <Fragment key={s.ticker}>
                       {/* ── Main data row ── */}
-                      <tr style={{ borderBottom: rowBorder }}>
+                      <tr style={{ borderBottom: rowBorder, background: rowBg }}>
                         <td style={{ padding: "11px 14px", textAlign: "center", color: TEXT_TER, fontSize: 13 }}>{i + 1}</td>
                         <td style={{ padding: "11px 14px" }}>
                           <Link
@@ -507,7 +518,7 @@ export default function StocksFilteredView({ items }: Props) {
 
                       {/* ── Description sub-row — top 10 only ── */}
                       {hasDesc && (
-                        <tr style={{ borderBottom: descBorder }}>
+                        <tr style={{ borderBottom: descBorder, background: rowBg }}>
                           <td />
                           <td colSpan={8} style={{ paddingTop: 0 }}>
                             <DescriptionRow

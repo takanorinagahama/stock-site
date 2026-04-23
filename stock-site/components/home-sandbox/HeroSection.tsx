@@ -48,7 +48,7 @@ export function HeroSection({ count, asOfMonth }: HeroSectionProps) {
           >
             <span style={{ fontSize: 12, color: "#818cf8" }}>⬡</span>
             <span style={{ fontSize: 12, color: "#a5b4fc", fontWeight: 500 }}>
-              初心者向け AI銘柄ビューア
+              初心者向け AI関連株ガイド
             </span>
           </div>
 
@@ -63,9 +63,9 @@ export function HeroSection({ count, asOfMonth }: HeroSectionProps) {
               marginBottom: 16,
             }}
           >
-            AI関連株を、
+            AI関連株の<span style={{ color: "#818cf8" }}>地図</span>を、
             <br />
-            <span style={{ color: "#818cf8" }}>テーマ別</span>に比べる。
+            わかりやすく。
           </h1>
 
           {/* description */}
@@ -79,7 +79,7 @@ export function HeroSection({ count, asOfMonth }: HeroSectionProps) {
             }}
           >
             AI Stock Data は、AI関連企業・銘柄の情報をテーマごとに整理した参考情報サイトです。
-            難しい指標の意味をやさしく説明しながら、複数の銘柄を一覧で比べられるようにしています。
+            半導体、クラウド、データセンター、電力インフラまで、広がるAI産業を初心者でも比較しやすい形で見渡せます。
           </p>
 
           {/* meta */}
