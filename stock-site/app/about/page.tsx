@@ -63,6 +63,17 @@ export default function AboutPage() {
             掲載内容は順次見直しながら更新しています。企業情報や分類、説明文なども今後の更新でより分かりやすく整えていく予定です。
           </p>
         </StaticSectionCard>
+
+        <StaticSectionCard title="運営者">
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <div style={{ display: "flex", alignItems: "baseline", gap: 10, flexWrap: "wrap" }}>
+              <span style={{ fontSize: 15, fontWeight: 600, color: "#e2e8f0" }}>Ragta（ラグ太）</span>
+            </div>
+            <p style={{ fontSize: 14, lineHeight: 1.85, color: "#cbd5e1" }}>
+              YJFX、マネーフォワード、楽天、メルカリなどで金融・決済関係のプロジェクトマネージャー・プロダクトマネージャーを歴任。数々のサービス・機能リリースを担当。
+            </p>
+          </div>
+        </StaticSectionCard>
       </div>
     </StaticPageLayout>
   );
