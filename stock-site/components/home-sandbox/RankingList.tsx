@@ -186,13 +186,13 @@ function RankCard({ stock, rank }: { stock: StockApiItem; rank: number }) {
         padding: "16px 20px",
       }}
     >
-      {/* ── Main info row ── */}
+      {/* ── Row 1: rank + ticker + name/category + ScoreBadge ── */}
       <div
         style={{
           display: "flex",
           alignItems: "center",
-          gap: 14,
-          flexWrap: "wrap",
+          gap: 10,
+          marginBottom: 8,
         }}
       >
         {/* Rank */}
@@ -201,7 +201,7 @@ function RankCard({ stock, rank }: { stock: StockApiItem; rank: number }) {
             fontSize: 13,
             fontWeight: 600,
             color: TEXT_TER,
-            width: 22,
+            width: 20,
             textAlign: "center",
             flexShrink: 0,
           }}
@@ -225,7 +225,7 @@ function RankCard({ stock, rank }: { stock: StockApiItem; rank: number }) {
         </span>
 
         {/* Name + Category */}
-        <div style={{ flex: 1, minWidth: 120 }}>
+        <div style={{ flex: 1, minWidth: 0 }}>
           <p
             style={{
               fontSize: 13,
@@ -244,80 +244,45 @@ function RankCard({ stock, rank }: { stock: StockApiItem; rank: number }) {
           </p>
         </div>
 
-        {/* Score + Stats */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 14,
-            flexShrink: 0,
-            flexWrap: "wrap",
-            justifyContent: "flex-end",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: 7 }}>
-            <ScoreBadge score={stock.score} />
-            <StarRating score={stock.score} />
-          </div>
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 10,
-              flexWrap: "wrap",
-            }}
-          >
-            <span
-              style={{
-                fontSize: 12,
-                color: TEXT_TER,
-                whiteSpace: "nowrap",
-              }}
-            >
-              AI売上:{" "}
-              <span
-                style={{
-                  color: TEXT_SEC,
-                  fontVariantNumeric: "tabular-nums",
-                }}
-              >
-                {stock.aiRevMid != null
-                  ? formatAiRevenue(stock.aiRevMid)
-                  : "—"}
-              </span>
-            </span>
-            <span
-              style={{
-                fontSize: 12,
-                color: TEXT_TER,
-                whiteSpace: "nowrap",
-              }}
-            >
-              成長:{" "}
-              <span
-                style={{
-                  color: growthColor,
-                  fontVariantNumeric: "tabular-nums",
-                }}
-              >
-                {growthStr}
-              </span>
-            </span>
-            <DepBadge
-              label={stock.dependencyLabel}
-              level={stock.dependencyLevel}
-            />
-            <TierBadge tier={stock.tier} />
-          </div>
+        {/* Score (right-aligned) */}
+        <div style={{ flexShrink: 0 }}>
+          <ScoreBadge score={stock.score} />
         </div>
+      </div>
+
+      {/* ── Row 2: stars + stats badges (wrappable) ── */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          flexWrap: "wrap",
+          gap: "5px 12px",
+          marginLeft: 30,
+          marginBottom: hasDesc ? 8 : 0,
+        }}
+      >
+        <StarRating score={stock.score} />
+        <span style={{ fontSize: 12, color: TEXT_TER, whiteSpace: "nowrap" }}>
+          AI売上:{" "}
+          <span style={{ color: TEXT_SEC, fontVariantNumeric: "tabular-nums" }}>
+            {stock.aiRevMid != null ? formatAiRevenue(stock.aiRevMid) : "—"}
+          </span>
+        </span>
+        <span style={{ fontSize: 12, color: TEXT_TER, whiteSpace: "nowrap" }}>
+          成長:{" "}
+          <span style={{ color: growthColor, fontVariantNumeric: "tabular-nums" }}>
+            {growthStr}
+          </span>
+        </span>
+        <DepBadge label={stock.dependencyLabel} level={stock.dependencyLevel} />
+        <TierBadge tier={stock.tier} />
       </div>
 
       {/* ── Description ── */}
       {hasDesc && (
         <div
           style={{
-            marginTop: 10,
-            marginLeft: 36,
+            marginLeft: 30,
             display: "flex",
             flexDirection: "column",
             gap: 6,
