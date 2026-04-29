@@ -10,7 +10,7 @@ export const article: FeatureArticle = {
   updatedAt: "2026-04-29",
   featured: true,
   relatedThemes: ["ai-related-stocks"],
-  relatedStocks: ["AMZN", "SHOP", "IBM", "MSFT", "GOOGL"],
+  relatedStocks: ["AMZN", "IBM", "MSFT", "GOOGL"],
   sections: [
     {
       heading: "AIを使っているのに、なぜ仕事は減らないのか",
