@@ -11,6 +11,7 @@ import { article as spaceSolarPower } from "../../content/features/space-based-s
 import { article as agiOrganization } from "../../content/features/agi-organization-startup";
 import { article as palantirClaudeDecisionOs } from "../../content/features/palantir-claude-decision-os";
 import { article as aiProductivityWhitcollar } from "../../content/features/ai-productivity-whitcollar-paradox";
+import { article as aiBlockchainApiEconomy } from "../../content/features/ai-blockchain-api-economy-2026";
 
 const ALL_FEATURES: FeatureArticle[] = [
   aiBeneficiaries,
@@ -25,6 +26,7 @@ const ALL_FEATURES: FeatureArticle[] = [
   agiOrganization,
   palantirClaudeDecisionOs,
   aiProductivityWhitcollar,
+  aiBlockchainApiEconomy,
 ];
 
 const byDateDesc = (a: FeatureArticle, b: FeatureArticle) =>
