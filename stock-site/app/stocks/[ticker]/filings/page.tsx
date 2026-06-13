@@ -74,13 +74,11 @@ export default async function FilingsPage({ params }: PageProps) {
   const upperTicker = ticker.toUpperCase();
 
   // 銘柄情報と公開情報を並行取得（テーブル未作成でもクラッシュしない）
-  let filingsFetchError: string | null = null;
-  const [stock, edgarFilings] = await Promise.all([
+  const [stock, [edgarFilings, filingsFetchError]] = await Promise.all([
     fetchStockByTicker(upperTicker),
-    getFilingsByTicker(upperTicker, "edgar", 60).catch((e: Error) => {
-      filingsFetchError = e.message ?? "取得エラー";
-      return [] as FilingRow[];
-    }),
+    getFilingsByTicker(upperTicker, "edgar", 60)
+      .then((f) => [f, null] as [FilingRow[], null])
+      .catch((e: Error) => [[] as FilingRow[], e.message ?? "取得エラー"] as [FilingRow[], string]),
   ]);
 
   const isUsStock = true; // 全銘柄EDGAR対象（NYSE/NASDAQ上場の外国株も20-F等を提出）

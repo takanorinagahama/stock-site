@@ -9,8 +9,9 @@
 - **URL**: ai-stock-data.com
 - **技術スタック**: Next.js 15 (App Router) + Supabase (PostgreSQL)
 - **銘柄管理方針**: 毎月Claudeで銘柄データを調査し、SupabaseにSQLで投入
-- **表示銘柄数**: 常時100社（`is_active = true`）
+- **表示銘柄数**: 常時50社（`is_active = true`）※2026-05月分より100社→50社に変更
 - **過去銘柄**: DBには残す（テーマ・特集記事からのリンク切れを防ぐため）
+- **SQL出力先**: `/Users/takanorinagahama/Development/stock-site/docs/output/`
 
 ---
 
@@ -137,34 +138,32 @@ DBに入れる英語スラッグと、サイト上の日本語表示の対応（
 
 ### バッチ分割ルール
 
-Claudeのコンテキスト制限を避けるため、**100銘柄を20銘柄ずつ5バッチに分けて**SQLを生成する。
+Claudeのコンテキスト制限を避けるため、**50銘柄を3バッチに分けて**SQLを生成する。出力先は `/Users/takanorinagahama/Development/stock-site/docs/output/`。
 
-| バッチ | 銘柄番号 | ファイル名 |
-|---|---|---|
-| Batch 1 | 1〜20社 | `YYYY-MM_batch1.sql` |
-| Batch 2 | 21〜40社 | `YYYY-MM_batch2.sql` |
-| Batch 3 | 41〜60社 | `YYYY-MM_batch3.sql` |
-| Batch 4 | 61〜80社 | `YYYY-MM_batch4.sql` |
-| Batch 5 | 81〜100社 | `YYYY-MM_batch5.sql` |
+| バッチ | 銘柄番号 | ファイル名 | 備考 |
+|---|---|---|---|
+| Batch 1 | 1〜20社 | `YYYY-MM_batch1.sql` | |
+| Batch 2 | 21〜40社 | `YYYY-MM_batch2.sql` | |
+| Batch 3 | 41〜50社 | `YYYY-MM_batch3.sql` | 最終バッチ |
 
-- **Batch 1〜4**: `stocks` + `ai_metrics` のUPSERTのみ（BEGIN〜COMMITの完結形式）
-- **Batch 5（最終）**: `stocks` + `ai_metrics` のUPSERT ＋ 旧銘柄の `is_active = false` 更新 ＋ 確認SELECT
+- **Batch 1〜2**: `stocks` + `ai_metrics` のUPSERTのみ（BEGIN〜COMMITの完結形式）
+- **Batch 3（最終）**: `stocks` + `ai_metrics` のUPSERT ＋ 旧銘柄の `is_active = false` 更新 ＋ 確認SELECT
 
 ### SQLの構成（各バッチ共通）
 
 1. ヘッダーコメント（基準月・バッチ番号・銘柄範囲・生成日時）
 2. `BEGIN;`
-3. `stocks` UPSERT（20社、`is_active = true`）
-4. `ai_metrics` UPSERT（同月分、20社）
-5. 【Batch 5のみ】旧銘柄を `is_active = false` に更新
-6. 【Batch 5のみ】確認用 SELECT（active件数・今月metrics件数）
+3. `stocks` UPSERT（Batch1〜2: 20社、Batch3: 10社、`is_active = true`）
+4. `ai_metrics` UPSERT（同月分、同社数）
+5. 【Batch 3のみ】旧銘柄を `is_active = false` に更新（`WHERE ticker NOT IN (今回の全50社)`）
+6. 【Batch 3のみ】確認用 SELECT（active件数・今月metrics件数）
 7. `COMMIT;`
 
-### SQLテンプレート（Batch 1〜4）
+### SQLテンプレート（Batch 1〜2）
 
 ```sql
 -- ============================================================
--- AI銘柄データ投入 SQL  Batch X/5（銘柄 N〜M社）
+-- AI銘柄データ投入 SQL  Batch X/3（銘柄 N〜M社）
 -- baseMonth: YYYY-MM  このバッチ: 20社
 -- ============================================================
 
@@ -217,12 +216,12 @@ ON CONFLICT (ticker, updated_month) DO UPDATE SET
 COMMIT;
 ```
 
-### SQLテンプレート（Batch 5／最終バッチ）
+### SQLテンプレート（Batch 3／最終バッチ）
 
 ```sql
 -- ============================================================
--- AI銘柄データ投入 SQL  Batch 5/5（銘柄 81〜100社）【最終バッチ】
--- baseMonth: YYYY-MM  このバッチ: 20社
+-- AI銘柄データ投入 SQL  Batch 3/3（銘柄 41〜50社）【最終バッチ】
+-- baseMonth: YYYY-MM  このバッチ: 10社
 -- ============================================================
 
 BEGIN;
@@ -233,7 +232,7 @@ INSERT INTO public.stocks
    dependency_level, dependency_level_int, dependency_label, is_active)
 VALUES
   ('TICKER', '...', 'US', '...',  '...', '...', 2, 2, '中程度', true),
-  -- 残り19銘柄...
+  -- 残り9銘柄...
 ON CONFLICT (ticker) DO UPDATE SET
   name                 = EXCLUDED.name,
   country              = EXCLUDED.country,
@@ -248,7 +247,7 @@ ON CONFLICT (ticker) DO UPDATE SET
 -- 2. 今回リストにない旧銘柄を非アクティブに（行は残す）
 UPDATE public.stocks
 SET is_active = false
-WHERE ticker NOT IN ('NVDA', 'MSFT', ...今回の全100社のticker...);
+WHERE ticker NOT IN ('NVDA', 'MSFT', ...今回の全50社のticker...);
 
 -- 3. ai_metrics UPSERT
 INSERT INTO public.ai_metrics
@@ -260,7 +259,7 @@ VALUES
   ('TICKER', 'YYYY-MM', 'YYYY-MM', 'B',
    5000, 5000, 5000,
    70, 65, 60, 75, 68),
-  -- 残り19銘柄...
+  -- 残り9銘柄...
 ON CONFLICT (ticker, updated_month) DO UPDATE SET
   fiscal_period        = EXCLUDED.fiscal_period,
   tier                 = EXCLUDED.tier,
@@ -287,11 +286,13 @@ COMMIT;
 ## データの流れ
 
 ```
-Claudeで銘柄調査・SQL生成（100銘柄 × 5バッチ）
+Claudeで銘柄調査・SQL生成（50銘柄 × 3バッチ）
       ↓
-Batch 1〜5 を順にSupabase SQL Editorに貼り付け・実行
+出力先: /Users/takanorinagahama/Development/stock-site/docs/output/
       ↓
-Batch 5実行後に active_stocks = 100 を確認
+Batch 1〜3 を順にSupabase SQL Editorに貼り付け・実行
+      ↓
+Batch 3実行後に active_stocks = 50 を確認
       ↓
 サイトに自動反映（Next.js ISR 5分キャッシュ）
 ```
