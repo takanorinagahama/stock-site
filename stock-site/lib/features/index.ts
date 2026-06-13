@@ -12,6 +12,7 @@ import { article as agiOrganization } from "../../content/features/agi-organizat
 import { article as palantirClaudeDecisionOs } from "../../content/features/palantir-claude-decision-os";
 import { article as aiProductivityWhitcollar } from "../../content/features/ai-productivity-whitcollar-paradox";
 import { article as aiBlockchainApiEconomy } from "../../content/features/ai-blockchain-api-economy-2026";
+import { article as claudeCodeSubagentsFintech } from "../../content/features/claude-code-subagents-fintech-team";
 
 const ALL_FEATURES: FeatureArticle[] = [
   aiBeneficiaries,
@@ -27,6 +28,7 @@ const ALL_FEATURES: FeatureArticle[] = [
   palantirClaudeDecisionOs,
   aiProductivityWhitcollar,
   aiBlockchainApiEconomy,
+  claudeCodeSubagentsFintech,
 ];
 
 const byDateDesc = (a: FeatureArticle, b: FeatureArticle) =>

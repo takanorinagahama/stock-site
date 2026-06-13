@@ -297,6 +297,7 @@ export default async function FeatureDetailPage({
                     color: "#cbd5e1",
                     marginBottom: 10,
                     marginTop: 0,
+                    whiteSpace: para.includes("\n") ? "pre-line" : undefined,
                   }}
                 >
                   {para}
