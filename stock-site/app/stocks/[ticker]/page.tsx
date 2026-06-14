@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { SiteHeader } from "../../../components/shared/SiteHeader";
-import { fetchStockByTicker } from "../../../lib/fetch-stocks";
+import { fetchStockByTicker, fetchStockItems } from "../../../lib/fetch-stocks";
 import { THEMES } from "../../../lib/themes";
 
 /* ─── Design tokens ─── */
@@ -145,11 +145,105 @@ function ContributionBar({
   );
 }
 
+function PrevNextNav({
+  prev,
+  next,
+  rank,
+}: {
+  prev: { ticker: string; score: number | null } | null;
+  next: { ticker: string; score: number | null } | null;
+  rank: number;
+}) {
+  return (
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "space-between",
+        gap: 8,
+        marginBottom: 20,
+      }}
+    >
+      {prev ? (
+        <Link
+          href={`/stocks/${prev.ticker}`}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+            fontSize: 13,
+            color: TEXT_TER,
+            textDecoration: "none",
+            padding: "6px 12px",
+            borderRadius: 8,
+            border: "1px solid rgba(255,255,255,0.07)",
+            background: "rgba(255,255,255,0.03)",
+          }}
+        >
+          <span style={{ fontSize: 11 }}>‹</span>
+          <span style={{ color: INDIGO_TEXT, fontWeight: 600 }}>{prev.ticker}</span>
+          {prev.score != null && (
+            <span style={{ fontSize: 11 }}>{prev.score}点</span>
+          )}
+        </Link>
+      ) : (
+        <div />
+      )}
+
+      <span style={{ fontSize: 11, color: "rgba(255,255,255,0.25)", whiteSpace: "nowrap" }}>
+        #{rank}
+      </span>
+
+      {next ? (
+        <Link
+          href={`/stocks/${next.ticker}`}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+            fontSize: 13,
+            color: TEXT_TER,
+            textDecoration: "none",
+            padding: "6px 12px",
+            borderRadius: 8,
+            border: "1px solid rgba(255,255,255,0.07)",
+            background: "rgba(255,255,255,0.03)",
+          }}
+        >
+          {next.score != null && (
+            <span style={{ fontSize: 11 }}>{next.score}点</span>
+          )}
+          <span style={{ color: INDIGO_TEXT, fontWeight: 600 }}>{next.ticker}</span>
+          <span style={{ fontSize: 11 }}>›</span>
+        </Link>
+      ) : (
+        <div />
+      )}
+    </div>
+  );
+}
+
 export default async function StockDetailPage({ params }: DetailPageProps) {
   const { ticker } = await params;
-  const item = await fetchStockByTicker(ticker);
+  const [item, stocksData] = await Promise.all([
+    fetchStockByTicker(ticker),
+    fetchStockItems(),
+  ]);
 
   if (!item) notFound();
+
+  const rankedStocks = stocksData.ok
+    ? stocksData.items.filter((s) => s.score != null)
+    : [];
+  const currentIdx = rankedStocks.findIndex(
+    (s) => s.ticker.toUpperCase() === item.ticker.toUpperCase(),
+  );
+  const currentRank = currentIdx >= 0 ? currentIdx + 1 : null;
+  const prevStock = currentIdx > 0 ? rankedStocks[currentIdx - 1] : null;
+  const nextStock =
+    currentIdx >= 0 && currentIdx < rankedStocks.length - 1
+      ? rankedStocks[currentIdx + 1]
+      : null;
 
   /* Related themes */
   const relatedThemes = THEMES.filter((t) =>
@@ -227,6 +321,11 @@ export default async function StockDetailPage({ params }: DetailPageProps) {
         </nav>
 
         {inactiveBanner}
+
+        {/* Prev / Next nav */}
+        {currentRank != null && (
+          <PrevNextNav prev={prevStock} next={nextStock} rank={currentRank} />
+        )}
 
         {/* ===== Summary header card ===== */}
         <div
@@ -649,6 +748,13 @@ export default async function StockDetailPage({ params }: DetailPageProps) {
             最終的な投資判断はご自身の責任で行ってください。掲載情報の正確性・完全性・最新性は保証しません。
           </p>
         </div>
+
+        {/* Bottom Prev / Next nav */}
+        {currentRank != null && (
+          <div style={{ marginTop: 20 }}>
+            <PrevNextNav prev={prevStock} next={nextStock} rank={currentRank} />
+          </div>
+        )}
       </div>
 
       {/* Responsive 2-col grid */}
