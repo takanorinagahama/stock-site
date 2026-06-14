@@ -2,9 +2,9 @@ import type { FeatureArticle } from "../../lib/features/types";
 
 export const article: FeatureArticle = {
   slug: "ai-data-center-stocks",
-  title: "AIデータセンター関連株まとめ 注目企業と見るべきポイント",
+  title: "AIデータセンター電力需要と関連株まとめ｜注目銘柄を整理",
   summary:
-    "AI需要の拡大で、データセンターは半導体の次に重要な観察対象になっている。容量拡張、土地取得、メガワット、電力・冷却仕様という観点で、どの企業を見るとテーマを追いやすいかを整理する。",
+    "AIデータセンターの電力需要・電源インフラ関連株を解説。MSFT・EQIX・DLR・VRTなど注目銘柄を、容量拡張・メガワット・冷却仕様の観点から整理。AI銘柄を探す初心者向け。",
   category: "テーマ深掘り",
   updatedAt: "2026-03-23",
   featured: false,

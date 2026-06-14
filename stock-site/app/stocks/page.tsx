@@ -4,16 +4,16 @@ import { fetchStockItems } from "../../lib/fetch-stocks";
 import StocksFilteredView from "./stocks-filtered-view";
 
 export const metadata: Metadata = {
-  title: "AI銘柄ランキング | AI Stock Data",
+  title: "AI株ランキング｜AIスコアで比較できるAI関連銘柄一覧 | AI Stock Data",
   description:
-    "AI関連銘柄の一覧ページ。企業のAIとの関わり方や比較軸を整理し、投資判断に役立つ情報を見やすく掲載。",
+    "NVDA・MSFT・PLTR・METAなどAI関連株50銘柄をAIスコアでランキング。AI売上・成長率・AI依存度を一覧で比較。どの企業がAIに本気で取り組んでいるか初心者にもわかりやすく整理。",
   alternates: {
     canonical: "https://ai-stock-data.com/stocks",
   },
   openGraph: {
-    title: "AI銘柄ランキング | AI Stock Data",
+    title: "AI株ランキング｜AIスコアで比較できるAI関連銘柄一覧 | AI Stock Data",
     description:
-      "AI関連銘柄の一覧ページ。企業のAIとの関わり方や比較軸を整理し、投資判断に役立つ情報を見やすく掲載。",
+      "NVDA・MSFT・PLTR・METAなどAI関連株50銘柄をAIスコアでランキング。AI売上・成長率・AI依存度を一覧で比較。",
     url: "https://ai-stock-data.com/stocks",
     siteName: "AI Stock Data",
     images: ["/ogp.png"],
@@ -22,9 +22,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "AI銘柄ランキング | AI Stock Data",
+    title: "AI株ランキング｜AIスコアで比較できるAI関連銘柄一覧 | AI Stock Data",
     description:
-      "AI関連銘柄の一覧ページ。企業のAIとの関わり方や比較軸を整理し、投資判断に役立つ情報を見やすく掲載。",
+      "NVDA・MSFT・PLTR・METAなどAI関連株50銘柄をAIスコアでランキング。AI売上・成長率・AI依存度を一覧で比較。",
     images: ["/ogp.png"],
   },
 };

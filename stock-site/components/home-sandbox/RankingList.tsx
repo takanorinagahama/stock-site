@@ -393,6 +393,26 @@ export function RankingList({ stocks }: RankingListProps) {
           <RankCard key={stock.ticker} stock={stock} rank={i + 1} />
         ))}
       </div>
+
+      {/* Bottom CTA */}
+      <div style={{ textAlign: "center", marginTop: 20 }}>
+        <Link
+          href="/stocks"
+          style={{
+            display: "inline-block",
+            fontSize: 14,
+            fontWeight: 600,
+            color: "#818cf8",
+            background: "rgba(99,102,241,0.1)",
+            border: "1px solid rgba(99,102,241,0.3)",
+            borderRadius: 10,
+            padding: "12px 32px",
+            textDecoration: "none",
+          }}
+        >
+          全AI銘柄のランキングを見る →
+        </Link>
+      </div>
     </section>
   );
 }

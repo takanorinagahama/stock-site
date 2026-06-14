@@ -367,6 +367,57 @@ export default async function FeatureDetailPage({
           </div>
         )}
 
+        {/* Ranking CTA */}
+        {article.relatedStocks.length > 0 && (
+          <div
+            style={{
+              background: "#141922",
+              border: "1px solid rgba(129,140,248,0.2)",
+              borderRadius: 12,
+              padding: "20px 24px",
+              marginBottom: 40,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              gap: 16,
+              flexWrap: "wrap",
+            }}
+          >
+            <div>
+              <p
+                style={{
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: "#f1f5f9",
+                  margin: "0 0 4px",
+                }}
+              >
+                記事で紹介した銘柄のAIスコアを確認
+              </p>
+              <p style={{ fontSize: 12, color: "#94a3b8", margin: 0 }}>
+                {article.relatedStocks.join(" · ")} などをランキングで比較できます
+              </p>
+            </div>
+            <Link
+              href="/stocks"
+              style={{
+                fontSize: 13,
+                fontWeight: 600,
+                color: "#818cf8",
+                background: "rgba(129,140,248,0.1)",
+                border: "1px solid rgba(129,140,248,0.25)",
+                borderRadius: 8,
+                padding: "8px 18px",
+                textDecoration: "none",
+                whiteSpace: "nowrap",
+                flexShrink: 0,
+              }}
+            >
+              ランキングを見る →
+            </Link>
+          </div>
+        )}
+
         {/* Related features */}
         {related.length > 0 && (
           <section>
