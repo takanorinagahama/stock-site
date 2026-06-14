@@ -65,6 +65,30 @@ public/                静的ファイル（ogp.png等）
 - 毎月 `baseMonth` を更新してSQLを生成・適用する
 - テーマ別代表銘柄は `lib/themes/featured-stocks.ts` で管理する
 
+## 運用スクリプト
+
+| コマンド | スクリプト | 用途 |
+|---|---|---|
+| `npm run gen-tweet` | `scripts/gen-tweet.ts` | 月次スコア更新後のX投稿下書きを生成 |
+| `npm run update` | `scripts/update.ts` | スコア更新処理 |
+| `npm run import:csv` | `scripts/import_csv.ts` | CSVインポート |
+
+### gen-tweet の使い方
+
+毎月 Supabase に SQL を適用したあとに実行する：
+
+```bash
+npm run gen-tweet
+```
+
+- Supabase から最新スコアを取得し TOP5 をツイート形式に整形
+- 前月データがあれば差分（↑↓→）を自動表示
+- 文字数を表示（280文字以内を確認）
+- クリップボードに自動コピー → X を開いて貼り付けるだけ
+
+**月次運用フロー**:  
+SQL適用（Supabase） → `npm run gen-tweet` → X に投稿
+
 ## デプロイフロー
 
 ```
