@@ -390,8 +390,24 @@ export default function StocksFilteredView({ items }: Props) {
         {/* ════ Mobile ════ */}
         <div className="stock-mobile-cards">
           {filtered.length === 0 && (
-            <div style={{ padding: "48px 0", textAlign: "center", color: TEXT_TER, fontSize: 14 }}>
-              該当する銘柄がありません
+            <div style={{ padding: "48px 0", textAlign: "center" }}>
+              <p style={{ color: TEXT_TER, fontSize: 14, marginBottom: 16 }}>該当する銘柄がありません</p>
+              <button
+                type="button"
+                onClick={() => setActiveTheme("all")}
+                style={{
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: "#818cf8",
+                  background: "rgba(99,102,241,0.1)",
+                  border: "1px solid rgba(99,102,241,0.25)",
+                  borderRadius: 8,
+                  padding: "8px 18px",
+                  cursor: "pointer",
+                }}
+              >
+                フィルターをリセット
+              </button>
             </div>
           )}
 
@@ -498,8 +514,24 @@ export default function StocksFilteredView({ items }: Props) {
         {/* ════ Desktop ════ */}
         <div className="stock-desktop-view">
           {filtered.length === 0 && (
-            <div style={{ padding: "48px 0", textAlign: "center", color: TEXT_TER, fontSize: 14 }}>
-              該当する銘柄がありません
+            <div style={{ padding: "48px 0", textAlign: "center" }}>
+              <p style={{ color: TEXT_TER, fontSize: 14, marginBottom: 16 }}>該当する銘柄がありません</p>
+              <button
+                type="button"
+                onClick={() => setActiveTheme("all")}
+                style={{
+                  fontSize: 13,
+                  fontWeight: 600,
+                  color: "#818cf8",
+                  background: "rgba(99,102,241,0.1)",
+                  border: "1px solid rgba(99,102,241,0.25)",
+                  borderRadius: 8,
+                  padding: "8px 18px",
+                  cursor: "pointer",
+                }}
+              >
+                フィルターをリセット
+              </button>
             </div>
           )}
 
@@ -548,7 +580,7 @@ export default function StocksFilteredView({ items }: Props) {
                       <tr style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}>
                         {[
                           { label: "#",            align: "center" as const },
-                          { label: "ticker",       align: "left"   as const },
+                          { label: "ティッカー",   align: "left"   as const },
                           { label: "企業名",       align: "left"   as const },
                           { label: "AIカテゴリ",   align: "left"   as const },
                           { label: "AI期待度 ↑",   align: "left"   as const },
@@ -762,7 +794,7 @@ function ThemeChip({
       style={{
         fontSize: 11,
         fontWeight: 500,
-        padding: "4px 10px",
+        padding: "7px 12px",
         borderRadius: 7,
         border: active ? "1px solid rgba(99,102,241,0.35)" : "1px solid rgba(255,255,255,0.06)",
         background: active ? "rgba(99,102,241,0.15)" : "rgba(255,255,255,0.04)",

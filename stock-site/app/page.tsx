@@ -35,6 +35,9 @@ export const metadata: Metadata = {
   },
 };
 
+const BG = "#0c1118";
+const TEXT_PRI = "#f1f5f9";
+
 export default async function Home() {
   const [summary, stocksData] = await Promise.all([
     fetchStocksSummary(),
@@ -54,9 +57,9 @@ export default async function Home() {
   return (
     <div
       style={{
-        background: "#0c1118",
+        background: BG,
         minHeight: "100vh",
-        color: "#f1f5f9",
+        color: TEXT_PRI,
         fontFamily:
           'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
       }}

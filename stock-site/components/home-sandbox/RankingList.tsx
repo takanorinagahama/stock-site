@@ -297,6 +297,10 @@ function RankCard({ stock, rank }: { stock: StockApiItem; rank: number }) {
                 lineHeight: 1.7,
                 margin: 0,
                 wordBreak: "break-word",
+                display: "-webkit-box",
+                WebkitLineClamp: 3,
+                WebkitBoxOrient: "vertical",
+                overflow: "hidden",
               }}
             >
               {stock.companyDescription}

@@ -120,9 +120,7 @@ export default async function FeatureDetailPage({
             style={{
               color: "#94a3b8",
               overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
-              maxWidth: 300,
+              wordBreak: "break-word",
             }}
           >
             {article.title}

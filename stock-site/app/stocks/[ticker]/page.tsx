@@ -178,6 +178,7 @@ function PrevNextNav({
             borderRadius: 8,
             border: "1px solid rgba(255,255,255,0.07)",
             background: "rgba(255,255,255,0.03)",
+            minHeight: 44,
           }}
         >
           <span style={{ fontSize: 11 }}>‹</span>
@@ -208,6 +209,7 @@ function PrevNextNav({
             borderRadius: 8,
             border: "1px solid rgba(255,255,255,0.07)",
             background: "rgba(255,255,255,0.03)",
+            minHeight: 44,
           }}
         >
           {next.score != null && (
@@ -284,7 +286,7 @@ export default async function StockDetailPage({ params }: DetailPageProps) {
           gap: 8,
         }}
       >
-        <span>⚠</span>
+        <span role="img" aria-label="警告">⚠</span>
         <span>この銘柄は現在の銘柄リストには含まれていません。過去時点のデータを表示しています。</span>
       </div>
     ) : null;
@@ -524,7 +526,7 @@ export default async function StockDetailPage({ params }: DetailPageProps) {
           </div>
 
           {/* Right: Score badge */}
-          <div style={{ textAlign: "center", minWidth: 100 }}>
+          <div style={{ textAlign: "center", minWidth: 100, alignSelf: "flex-start" }}>
             <p
               style={{
                 fontSize: 11,
