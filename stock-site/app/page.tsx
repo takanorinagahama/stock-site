@@ -22,7 +22,6 @@ export const metadata: Metadata = {
       "AI関連企業・銘柄を比較しやすく整理した投資情報サイト。AIとの関わり方、成長ドライバー、リスク要因、競合比較などをわかりやすく整理して掲載。",
     url: "https://ai-stock-data.com",
     siteName: "AI Stock Data",
-    images: ["/ogp.png"],
     locale: "ja_JP",
     type: "website",
   },
@@ -31,7 +30,6 @@ export const metadata: Metadata = {
     title: "AI Stock Data",
     description:
       "AI関連企業・銘柄を比較しやすく整理した投資情報サイト。AIとの関わり方、成長ドライバー、リスク要因、競合比較などをわかりやすく整理して掲載。",
-    images: ["/ogp.png"],
   },
 };
 
