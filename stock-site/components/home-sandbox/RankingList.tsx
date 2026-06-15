@@ -12,7 +12,8 @@ const INDIGO_TEXT = "#a5b4fc";
 /* ─── Helpers ─── */
 function formatAiRevenue(value: number | null): string {
   if (value == null) return "—";
-  return value.toLocaleString("en-US");
+  const billions = value / 1000;
+  return `$${billions.toFixed(1)}B`;
 }
 
 function formatGrowthDiff(value: number | null): string {

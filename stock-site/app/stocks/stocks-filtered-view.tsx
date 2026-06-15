@@ -38,7 +38,8 @@ function dedupeItems(items: StockApiItem[]): StockApiItem[] {
 
 function formatAiRevenue(value: number | null): string {
   if (value == null) return "—";
-  return value.toLocaleString("en-US");
+  const billions = value / 1000;
+  return `$${billions.toFixed(1)}B`;
 }
 
 function formatGrowthDiff(value: number | null): string {
@@ -308,7 +309,7 @@ type Props = { items: StockApiItem[] };
 
 const COLUMN_GUIDE = [
   { label: "AI期待度", desc: "0〜100の参考スコア。AI関連の成長期待度を4軸で算出した目安値です。" },
-  { label: "AI売上（推定）", desc: "AI関連から生まれる売上規模の目安です（百万ドル単位）。" },
+  { label: "AI売上（推定）", desc: "AI関連から生まれる売上規模の目安です（B = 10億ドル単位）。" },
   { label: "AI成長力", desc: "AI関連事業の成長がどれだけスコアを押し上げているかを見る指標です。" },
   { label: "AI依存度", desc: "その企業の事業がAI需要とどれだけ強くつながっているかを示します。" },
   { label: "確度", desc: "データの信頼性。高いほどスコアに自信があります（1〜10）。" },
